@@ -3,6 +3,8 @@
 
 using namespace geode::prelude;
 
+// This is my first Geode mod and also my first time using C++, so the code is probably bad
+
 struct Stat {
 	std::string stat;
 	std::string title;

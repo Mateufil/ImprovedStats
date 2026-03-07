@@ -41,6 +41,8 @@ List of stats, new stats are marked with <cl>blue</c>.
 ## <cg>Feedback</c>
 If you have any feedback or suggestions for this mod, you can message me on GD through [My Profile](user:33662092).
 
+This is my first mod, so some feedback would be nice!
+
 ## <co>Credits</c>
 - [Achievements Reimagined](mod:therisinglegend.achievements_reimagined) (By TheRisingLegend) - Inspiration for this mod, you should check it out!
 - [BetterInfo](mod:cvolton.betterinfo) (By cvolton) - Inspiration for quests stat, you should also check it out!
