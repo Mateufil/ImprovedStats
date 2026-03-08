@@ -66,7 +66,71 @@ public:
 		auto stat = statSprite->getID();
 		auto statInfo = m_statInfo[stat];
 		auto statDesc = statInfo[1];
-		if (stat == "40") { // Gauntlets
+		if (stat == "3") { // Official Levels
+			auto mainLevelsList = GameLevelManager::sharedState()->m_mainLevels;
+			auto mainLevels = 0;
+			auto mainCount = 0;
+			auto towerLevels = 0;
+			auto towerCount = 0;
+			auto meltdownLevels = 0;
+			auto meltdownCount = 0;
+			auto worldLevels = 0;
+			auto worldCount = 0;
+			auto subzeroLevels = 0;
+			auto subzeroCount = 0;
+			auto otherLevels = 0;
+			auto otherCount = 0;
+			for (auto [key, data] : CCDictionaryExt<std::string_view, CCString>(GameStatsManager::sharedState()->m_completedLevels)) {
+				if (key[0] == 'n') {
+					auto id = utils::numFromString<int>(key.substr(2)).unwrapOr(0);
+					if (id > 0 and id <= 1000) {
+						mainLevels++;
+					} else if (id > 1000 and id <= 2000) {
+						meltdownLevels++;
+					} else if (id > 2000 and id <= 3000) {
+						worldLevels++;
+					} else if (id > 4000 and id <= 5000) {
+						subzeroLevels++;
+					} else if (id > 5000 and id <= 6000) {
+						towerLevels++;
+					} else {
+						otherLevels++;
+					}
+				}
+			}
+			for (auto [key, data] : CCDictionaryExt<std::string_view>(mainLevelsList)) {
+				auto id = utils::numFromString<int>(key).unwrapOr(0);
+				if (id > 0 and id <= 1000) {
+					mainCount++;
+				} else if (id > 1000 and id <= 2000) {
+					meltdownCount++;
+				} else if (id > 2000 and id <= 3000) {
+					worldCount++;
+				} else if (id > 4000 and id <= 5000) {
+					subzeroCount++;
+				} else if (id > 5000 and id <= 6000) {
+					towerCount++;
+				} else {
+					otherCount++;
+				}
+			}
+			statDesc.append(fmt::format(
+				"\nMaximum amount is <cp>{}</c>.\n\n<cy>Main:</c> {} / {}\n<co>Tower:</c> {} / {}\n<cr>Meltdown:</c> {} / {}\n<cg>World:</c> {} / {}\n<cj>SubZero:</c> {} / {}\n<ca>Other:</c> {} / {}",
+				mainLevelsList->count(),
+				mainLevels, mainCount,
+				towerLevels, towerCount,
+				meltdownLevels, meltdownCount,
+				worldLevels, worldCount,
+				subzeroLevels, subzeroCount,
+				otherLevels, otherCount)
+			);
+		} else if (stat == "12") { // User Coins
+			statDesc.append(fmt::format("\n\n<co>Unverified Coins:</c> {}", GameStatsManager::sharedState()->m_pendingUserCoins->count()));
+		} else if (stat == "13") { // Diamonds
+			statDesc.append(fmt::format("\n\n<cf>Diamond Shards:</c> {}", GameStatsManager::sharedState()->getStat("29")));
+		} else if (stat == "22") { // Orbs
+			statDesc.append(fmt::format("\n\n<cl>Current Orbs:</c> {}", GameStatsManager::sharedState()->getStat("14")));
+		} else if (stat == "40") { // Gauntlets
 			auto gauntletLevels = GameLevelManager::sharedState()->getCompletedGauntletLevels();
 			auto gauntletDemons = GameLevelManager::sharedState()->getCompletedGauntletDemons();
 			statDesc.append(fmt::format("\n\n<cj>Completed Levels:</c> {}\n<cr>Completed Demons:</c> {}", gauntletLevels, gauntletDemons));
@@ -151,17 +215,17 @@ public:
 			{"1", "Jumps", 0.7f, "GJ_orderUpBtn_001.png", 0.55f},
 			{"2", "Attempts", 0.7f, "GJ_updateBtn_001.png", 0.55f},
 			{"42", "Insane\nLevels", 0.6f, "diffIcon_05_btn_001.png", 0.8f},
-			{"3", "Official\nLevels", 0.6f, "GJ_playBtn_001.png", 0.275f},
+			{"3", "Official\nLevels", 0.6f, "GJ_playBtn_001.png", 0.275f, true},
 			{"4", "User\nLevels", 0.6f, "GJ_playBtn2_001.png", 0.35f},
 			{"5", "Demon\nLevels", 0.6f, "diffIcon_06_btn_001.png", 0.8f},
 		},
 		{
 			{"6", "Stars", 0.7f, "GJ_bigStar_noShadow_001.png", 0.6f},
 			{"28", "Moons", 0.7f, "GJ_bigMoon_noShadow_001.png", 0.6f},
-			{"13", "Collected\nDiamonds", 0.6f, "GJ_bigDiamond_noShadow_001.png", 0.6f},
+			{"13", "Collected\nDiamonds", 0.6f, "GJ_bigDiamond_noShadow_001.png", 0.6f, true},
 			{"8", "Secret\nCoins", 0.6f, "secretCoinUI_001.png", 0.6f},
-			{"12", "User\nCoins", 0.6f, "secretCoinUI2_001.png", 0.6f},
-			{"22", "Collected\nOrbs", 0.6f, "currencyOrbIcon_001.png", 1.2f}
+			{"12", "User\nCoins", 0.6f, "secretCoinUI2_001.png", 0.6f, true},
+			{"22", "Collected\nOrbs", 0.6f, "currencyOrbIcon_001.png", 1.2f, true}
 		},
 		{
 			{"15", "Daily\nLevels", 0.6f, "gj_dailyCrown_001.png", 0.425f},
@@ -276,6 +340,17 @@ protected:
 			pageMenu->setVisible(false);
 			m_mainLayer->addChild(pageMenu);
 
+			// Nav Dot Button
+			auto navDotButtonSprite = CCSprite::createWithSpriteFrameName("gj_navDotBtn_off_001.png");
+			auto navDotButton = CCMenuItemSpriteExtra::create(
+				navDotButtonSprite,
+				this,
+				menu_selector(StatsPage::onNavDot)
+			);
+			navDotButton->setID("navdot-" + std::to_string(i));
+			navDotButton->setTag(i);
+			m_navDotMenu->addChild(navDotButton);
+
 			// Stats
 			for (int j = 0; j < m_statList[i].size(); j++) {
 				auto stat = m_statList[i][j].stat;
@@ -372,17 +447,6 @@ protected:
 				}
 			}
 			pageMenu->updateLayout();
-
-			// Nav Dot Button
-			auto navDotButtonSprite = CCSprite::createWithSpriteFrameName("gj_navDotBtn_off_001.png");
-			auto navDotButton = CCMenuItemSpriteExtra::create(
-				navDotButtonSprite,
-				this,
-				menu_selector(StatsPage::onNavDot)
-			);
-			navDotButton->setID("navdot-" + std::to_string(i));
-			navDotButton->setTag(i);
-			m_navDotMenu->addChild(navDotButton);
 		}
 		m_navDotMenu->updateLayout();
 
