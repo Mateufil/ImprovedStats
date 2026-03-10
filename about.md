@@ -1,6 +1,8 @@
 # <cj>Improved Stats</c>
 This mod improves the Stats Menu to make it look better and include new stats!
 
+It adds new stats such as collected icons, completed weekly demons, total completed quests, achievements and more!
+
 <cc>More stats may be added with updates!</c>
 
 ## <cy>Stats</c>
@@ -10,12 +12,7 @@ To access some extra stats you need to press the <cg>+ Button</c> next to them!
 - Jumps
 - Attempts
 - Official Levels
-	- <cj>Main</c>
-	- <cj>Tower</c>
-	- <cj>Meltdown</c>
-	- <cj>World</c>
-	- <cj>SubZero</c>
-	- <cj>Other</c>
+	- <cj>Main, Tower, Meltdown, World, SubZero, Other</c>
 - User Levels
 - Insane levels
 - Demon Levels
@@ -33,21 +30,24 @@ To access some extra stats you need to press the <cg>+ Button</c> next to them!
 - <cj>Event Levels</c>
 - Map Packs
 - Gauntlets
-	- <cj>Completed Levels</c>
-	- <cj>Completed Demons</c>
+	- <cj>Completed Levels, Completed Demons</c>
 - List Rewards
+- <cj>Icons</c>
+	- <cj>Cubes, Ships, Balls, UFOs, Waves</c>
+	- <cj>Robots, Spiders, Swings, Jetpacks</c>
+- <cj>Colors</c>
+	- <cj>Main Colors, Secondary Colors</c>
+- <cj>Special Items</c>
+	- <cj>Trails, Ship Fires, Animations, Death Effects</c>
+- <cj>Bought Items</c>
+	- <cj>Normal, Secret, Community, Mechanic, Diamond, Paths</c>
 - Liked/Disliked Levels
 - Rated Levels
 - Destroyed Players
 - <cj>Achievements</c>
-	- <cj>Main</c>
-	- <cj>Meltdown</c>
-	- <cj>World</c>
-	- <cj>SubZero</c>
+	- <cj>Main, Meltdown, World, SubZero</c>
 - <cj>Quests</c>
-	- <cj>10 Diamonds</c>
-	- <cj>15 Diamonds</c>
-	- <cj>20 Diamonds</c>
+	- <cj>10 Diamonds, 15 Diamonds, 20 Diamonds</c>
 
 ## <cg>Feedback</c>
 If you have any feedback or suggestions for this mod, you can message me on GD through [My Profile](user:33662092).

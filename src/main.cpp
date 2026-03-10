@@ -115,15 +115,15 @@ public:
 				}
 			}
 			statDesc.append(fmt::format(
-				"\nMaximum amount is <cp>{}</c>.\n\n<cy>Main:</c> {} / {}\n<co>Tower:</c> {} / {}\n<cr>Meltdown:</c> {} / {}\n<cg>World:</c> {} / {}\n<cj>SubZero:</c> {} / {}\n<ca>Other:</c> {} / {}",
+				"\nMaximum amount is <cp>{}</c>.\n\n<cy>Main:</c> {} / {}     <co>Tower:</c> {} / {}\n<cr>Meltdown:</c> {} / {}     <cg>World:</c> {} / {}\n<cj>SubZero:</c> {} / {}     <ca>Other:</c> {} / {}",
 				mainLevelsList->count(),
 				mainLevels, mainCount,
 				towerLevels, towerCount,
 				meltdownLevels, meltdownCount,
 				worldLevels, worldCount,
 				subzeroLevels, subzeroCount,
-				otherLevels, otherCount)
-			);
+				otherLevels, otherCount
+			));
 		} else if (stat == "12") { // User Coins
 			statDesc.append(fmt::format("\n\n<co>Unverified Coins:</c> {}", GameStatsManager::sharedState()->m_pendingUserCoins->count()));
 		} else if (stat == "13") { // Diamonds
@@ -134,6 +134,171 @@ public:
 			auto gauntletLevels = GameLevelManager::sharedState()->getCompletedGauntletLevels();
 			auto gauntletDemons = GameLevelManager::sharedState()->getCompletedGauntletDemons();
 			statDesc.append(fmt::format("\n\n<cj>Completed Levels:</c> {}\n<cr>Completed Demons:</c> {}", gauntletLevels, gauntletDemons));
+		} else if (stat == "icon") {
+			auto maxAmount = 0;
+			auto cubeIcons = 0;
+			auto shipIcons = 0;
+			auto ballIcons = 0;
+			auto ufoIcons = 0;
+			auto waveIcons = 0;
+			auto robotIcons = 0;
+			auto spiderIcons = 0;
+			auto swingIcons = 0;
+			auto jetpackIcons = 0;
+			for (int i = 0; i < m_iconTypes.size(); i++) {
+				auto iconType = m_iconTypes[i];
+				auto count = GameManager::sharedState()->countForType(iconType);
+				maxAmount += count;
+				for (int j = 1; j <= count; j++) {
+					if (GameManager::sharedState()->isIconUnlocked(j, iconType)) {
+						switch (iconType) { // I know this is a horrible way to do this...
+							case IconType::Cube: cubeIcons++; break;
+							case IconType::Ship: shipIcons++; break;
+							case IconType::Ball: ballIcons++; break;
+							case IconType::Ufo: ufoIcons++; break;
+							case IconType::Wave: waveIcons++; break;
+							case IconType::Robot: robotIcons++; break;
+							case IconType::Spider: spiderIcons++; break;
+							case IconType::Swing: swingIcons++; break;
+							case IconType::Jetpack: jetpackIcons++; break;
+						}
+					}
+				}
+			}
+			statDesc.append(fmt::format(
+				"\nMaximum amount is <cp>{}</c>.\n<cr>(Some aren't available yet)</c>\n\n<cg>Cubes:</c> {} / {}     <cp>Ships:</c> {} / {}\n<cr>Balls:</c> {} / {}     <co>UFOs:</c> {} / {}\n<cj>Waves:</c> {} / {}     Robots: {} / {}\n<ca>Spiders:</c> {} / {}     <cy>Swings:</c> {} / {}\n<cd>Jetpacks:</c> {} / {}",
+				maxAmount,
+				cubeIcons, GameManager::sharedState()->countForType(IconType::Cube),
+				shipIcons, GameManager::sharedState()->countForType(IconType::Ship),
+				ballIcons, GameManager::sharedState()->countForType(IconType::Ball),
+				ufoIcons, GameManager::sharedState()->countForType(IconType::Ufo),
+				waveIcons, GameManager::sharedState()->countForType(IconType::Wave),
+				robotIcons, GameManager::sharedState()->countForType(IconType::Robot),
+				spiderIcons, GameManager::sharedState()->countForType(IconType::Spider),
+				swingIcons, GameManager::sharedState()->countForType(IconType::Swing),
+				jetpackIcons, GameManager::sharedState()->countForType(IconType::Jetpack)
+			));
+		} else if (stat == "color") {
+			auto colors1 = 0;
+			auto colors2 = 0;
+			for (int i = 0; i < 107; i++) {
+				if (GameManager::sharedState()->isColorUnlocked(i, UnlockType::Col1)) {
+					colors1++;
+				}
+				if (GameManager::sharedState()->isColorUnlocked(i, UnlockType::Col2)) {
+					colors2++;
+				}
+			}
+			statDesc.append(fmt::format(
+				"\n\n<cy>Main Colors:</c> {} / {}\n<cp>Secondary Colors:</c> {} / {}",
+				colors1, 107,
+				colors2, 107
+			));
+		} else if (stat == "special") {
+			auto maxAmount = 0;
+			auto special = 0;
+			auto shipFires = 0;
+			auto items = 0;
+			auto deathEffects = 0;
+			for (int i  = 0; i < m_specialTypes.size(); i++) {
+				auto specialType = m_specialTypes[i];
+				if (specialType == IconType::Item) {
+					auto count = m_specialItems.size();
+					maxAmount += count;
+					for (int j = 0; j < count; j++) {
+						if (GameStatsManager::sharedState()->isItemUnlocked(UnlockType::GJItem, m_specialItems[j])) {
+							items++;
+						}
+					}
+				} else {
+					auto count = GameManager::sharedState()->countForType(specialType);
+					maxAmount += count;
+					for (int j = 1; j <= count; j++) {
+						if (GameManager::sharedState()->isIconUnlocked(j, specialType)) {
+							switch (specialType) {
+								case IconType::Special: special++; break;
+								case IconType::ShipFire: shipFires++; break;
+								case IconType::DeathEffect: deathEffects++; break;
+							}
+						}
+					}
+				}
+			}
+			statDesc.append(fmt::format(
+				"\nMaximum amount is <cp>{}</c>.\n\n<cg>Trails:</c> {} / {}     <cp>Ship Fires:</c> {} / {}\n<co>Animations:</c> {} / {}     <cr>Death Effects:</c> {} / {}",
+				maxAmount,
+				special, GameManager::sharedState()->countForType(IconType::Special),
+				shipFires, GameManager::sharedState()->countForType(IconType::ShipFire),
+				items, m_specialItems.size(),
+				deathEffects, GameManager::sharedState()->countForType(IconType::DeathEffect)
+			));
+		} else if (stat == "bought") {
+			auto normalItems = 0;
+			auto normalCount = 0;
+			auto secretItems = 0;
+			auto secretCount = 0;
+			auto communityItems = 0;
+			auto communityCount = 0;
+			auto mechanicItems = 0;
+			auto mechanicCount = 0;
+			auto diamondItems = 0;
+			auto diamondCount = 0;
+			auto pathItems = 0;
+			auto pathCount = 0;
+			for (auto item : CCArrayExt<GJStoreItem>(GameStatsManager::sharedState()->m_storeItemArray)) {
+				auto unlocked = false;
+				if (GameStatsManager::sharedState()->isStoreItemUnlocked(item->m_index)) {
+					unlocked = true;
+				}
+				switch (item->m_shopType) {
+					case ShopType::Normal:
+						normalCount++;
+						if (unlocked) {
+							normalItems++;
+						}
+						break;
+					case ShopType::Secret:
+						secretCount++;
+						if (unlocked) {
+							secretItems++;
+						}
+						break;
+					case ShopType::Community:
+						communityCount++;
+						if (unlocked) {
+							communityItems++;
+						}
+						break;
+					case ShopType::Mechanic:
+						mechanicCount++;
+						if (unlocked) {
+							mechanicItems++;
+						}
+						break;
+					case ShopType::Diamond:
+						diamondCount++;
+						if (unlocked) {
+							diamondItems++;
+						}
+						break;
+					case ShopType::Paths:
+						pathCount++;
+						if (unlocked) {
+							pathItems++;
+						}
+						break;
+				}
+			}
+			statDesc.append(fmt::format(
+				"\nMaximum amount is <cp>{}</c>.\n\n<cr>Normal:</c> {} / {}     <cg>Secret:</c> {} / {}\n<cy>Community:</c> {} / {}     <cp>Mechanic:</c> {} / {}\n<cj>Diamond:</c> {} / {}     <co>Paths:</c> {} / {}",
+				GameStatsManager::sharedState()->m_storeItemArray->count(),
+				normalItems, normalCount,
+				secretItems, secretCount,
+				communityItems, communityCount,
+				mechanicItems, mechanicCount,
+				diamondItems, diamondCount,
+				pathItems, pathCount
+			));
 		} else if (stat == "achievement") {
 			auto achievements = AchievementManager::sharedState()->m_allAchievements;
 			auto mainAchievements = 0;
@@ -174,13 +339,13 @@ public:
 				}
 			}
 			statDesc.append(fmt::format(
-				"\nMaximum amount is <cp>{}</c>.\n\n<cy>Main:</c> {} / {}\n<cr>Meltdown:</c> {} / {}\n<cg>World:</c> {} / {}\n<cj>SubZero:</c> {} / {}",
+				"\nMaximum amount is <cp>{}</c>.\n\n<cy>Main:</c> {} / {}     <cr>Meltdown:</c> {} / {}\n<cg>World:</c> {} / {}     <cj>SubZero:</c> {} / {}",
 				achievements->count(),
 				mainAchievements, mainCount,
 				meltdownAchievements, meltdownCount,
 				worldAchievements, worldCount,
-				subzeroAchievements, subzeroCount)
-			);
+				subzeroAchievements, subzeroCount
+			));
 		} else if (stat == "quest") {
 			auto quests10 = 0;
 			auto quests15 = 0;
@@ -236,6 +401,12 @@ public:
 			{"41", "List\nRewards", 0.6f, "GJ_listAddBtn_001.png", 0.8f}
 		},
 		{
+			{"icon", "Icons", 0.7f, "particle_17_001.png", 1.3f, true},
+			{"color", "Colors", 0.7f, "GJ_paintBtn_001.png", 0.75f, true},
+			{"special", "Special\nItems", 0.6f, "player_special_02_001.png", 0.8f, true},
+			{"bought", "Bought\nItems", 0.6f, "storeItemIcon_001.png", 1.2f, true}
+		},
+		{
 			{"10", "Liked/Disliked\nLevels", 0.6f, "GJ_like2Btn_001.png", 0.55f},
 			{"11", "Rated\nLevels", 0.6f, "GJ_starBtn_001.png", 0.55f},
 			{"9", "Destroyed\nPlayers", 0.6f, "particle_17_001.png", 1.3f},
@@ -266,8 +437,37 @@ public:
 		{"42", {"Insane Levels", "Total amount of completed <ca>Insane Difficulty Levels</c> in <cp>Normal Mode</c>."}},
 		{"weekly", {"Weekly Demons", "Total amount of completed <cr>Weekly Demon Levels</c> in <cp>Normal Mode</c>."}},
 		{"event", {"Event Levels", "Total amount of completed <cy>Event Levels</c> in <cp>Normal Mode</c>."}},
+		{"icon", {"Icons", "Total amount of unlocked <cg>Icons</c>."}},
+		{"color", {"Colors", "Total amount of unlocked <cg>Colors</c>.\nMaximum amount is <cp>214</c>."}},
+		{"special", {"Special Items", "Total amount of unlocked <cg>Trails, Ship Fires, Animations & Death Effects</c>."}},
+		{"bought", {"Bought Items", "Total amount of bought <cg>Icons & Items</c>."}},
 		{"achievement", {"Achievements", "Total amount of earned <cy>Achievements</c>."}},
 		{"quest", {"Quests", "Total amount of completed <cg>Quests</c>."}}
+	};
+
+	std::vector<IconType> m_iconTypes {
+		IconType::Cube,
+		IconType::Ship,
+		IconType::Ball,
+		IconType::Ufo,
+		IconType::Wave,
+		IconType::Robot,
+		IconType::Spider,
+		IconType::Swing,
+		IconType::Jetpack
+	};
+
+	std::vector<IconType> m_specialTypes {
+		IconType::Special,
+		IconType::ShipFire,
+		IconType::Item,
+		IconType::DeathEffect
+	};
+
+	std::vector<int> m_specialItems {
+		18, // Robot Anim 1
+		19, // Robot Anim 2
+		20 // Spider Anim
 	};
 
 	int m_currentPage = 0;
@@ -397,6 +597,46 @@ protected:
 					value = GameLevelManager::sharedState()->getCompletedWeeklyLevels();
 				} else if (stat == "event") {
 					value = GameLevelManager::sharedState()->getCompletedEventLevels(1, 10);
+				} else if (stat == "icon") {
+					for (int k  = 0; k < m_iconTypes.size(); k++) {
+						for (int l = 1; l <= GameManager::sharedState()->countForType(m_iconTypes[k]); l++) {
+							if (GameManager::sharedState()->isIconUnlocked(l, m_iconTypes[k])) {
+								value++;
+							}
+						}
+					}
+				} else if (stat == "color") {
+					for (int k = 0; k < 107; k++) {
+						if (GameManager::sharedState()->isColorUnlocked(k, UnlockType::Col1)) {
+							value++;
+						}
+						if (GameManager::sharedState()->isColorUnlocked(k, UnlockType::Col2)) {
+							value++;
+						}
+					}
+				} else if (stat == "special") {
+					for (int k  = 0; k < m_specialTypes.size(); k++) {
+						auto specialType = m_specialTypes[k];
+						if (specialType == IconType::Item) {
+							for (int l = 0; l < m_specialItems.size(); l++) {
+								if (GameStatsManager::sharedState()->isItemUnlocked(UnlockType::GJItem, m_specialItems[l])) {
+									value++;
+								}
+							}
+						} else {
+							for (int l = 1; l <= GameManager::sharedState()->countForType(specialType); l++) {
+								if (GameManager::sharedState()->isIconUnlocked(l, m_specialTypes[k])) {
+									value++;
+								}
+							}
+						}
+					}
+				} else if (stat == "bought") {
+					for (auto item : CCArrayExt<GJStoreItem>(GameStatsManager::sharedState()->m_storeItemArray)) {
+						if (GameStatsManager::sharedState()->isStoreItemUnlocked(item->m_index)) {
+							value++;
+						}
+					}
 				} else if (stat == "achievement") {
 					for (auto achievement : CCArrayExt<CCDictionary>(AchievementManager::sharedState()->m_allAchievements)) {
 						if (AchievementManager::sharedState()->isAchievementEarned(achievement->valueForKey("identifier")->getCString())) {
