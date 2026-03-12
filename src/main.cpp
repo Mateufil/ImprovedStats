@@ -125,15 +125,29 @@ public:
 				otherLevels, otherCount
 			));
 		} else if (stat == "12") { // User Coins
-			statDesc.append(fmt::format("\n\n<co>Unverified Coins:</c> {}", GameStatsManager::sharedState()->m_pendingUserCoins->count()));
+			statDesc.append(fmt::format("\n\n<co>Unverified Coins:</c> {}", addCommas(GameStatsManager::sharedState()->m_pendingUserCoins->count())));
 		} else if (stat == "13") { // Diamonds
-			statDesc.append(fmt::format("\n\n<cf>Diamond Shards:</c> {}", GameStatsManager::sharedState()->getStat("29")));
+			statDesc.append(fmt::format("\n\n<cf>Diamond Shards:</c> {}", addCommas(GameStatsManager::sharedState()->getStat("29"))));
 		} else if (stat == "22") { // Orbs
-			statDesc.append(fmt::format("\n\n<cl>Current Orbs:</c> {}", GameStatsManager::sharedState()->getStat("14")));
+			statDesc.append(fmt::format("\n\n<cl>Current Orbs:</c> {}", addCommas(GameStatsManager::sharedState()->getStat("14"))));
 		} else if (stat == "40") { // Gauntlets
 			auto gauntletLevels = GameLevelManager::sharedState()->getCompletedGauntletLevels();
 			auto gauntletDemons = GameLevelManager::sharedState()->getCompletedGauntletDemons();
 			statDesc.append(fmt::format("\n\n<cj>Completed Levels:</c> {}\n<cr>Completed Demons:</c> {}", gauntletLevels, gauntletDemons));
+		} else if (stat == "event") {
+			statDesc.append(fmt::format(
+				"\n\n<cc>Auto (1*):</c> {}     <cj>Easy (2*):</c> {}\n<cg>Normal (3*):</c> {}     <cy>Hard (4*):</c> {}\n<cs>Hard (5*):</c> {}     <co>Harder (6*):</c> {}\n<cr>Harder (7*):</c> {}     <cp>Insane (8*):</c> {}\n<ca>Insane (9*):</c> {}     <c>_Demon (10*):</c> {}",
+				GameLevelManager::sharedState()->getCompletedEventLevels(1, 1),
+				GameLevelManager::sharedState()->getCompletedEventLevels(2, 2),
+				GameLevelManager::sharedState()->getCompletedEventLevels(3, 3),
+				GameLevelManager::sharedState()->getCompletedEventLevels(4, 4),
+				GameLevelManager::sharedState()->getCompletedEventLevels(5, 5),
+				GameLevelManager::sharedState()->getCompletedEventLevels(6, 6),
+				GameLevelManager::sharedState()->getCompletedEventLevels(7, 7),
+				GameLevelManager::sharedState()->getCompletedEventLevels(8, 8),
+				GameLevelManager::sharedState()->getCompletedEventLevels(9, 9),
+				GameLevelManager::sharedState()->getCompletedEventLevels(10, 10)
+			));
 		} else if (stat == "icon") {
 			auto maxAmount = 0;
 			auto cubeIcons = 0;
@@ -362,7 +376,7 @@ public:
 					}
 				}
 			}
-			statDesc.append(fmt::format("\n\n<cl>10 Diamonds:</c> {}\n<cj>15 Diamonds:</c> {}\n<cf>20 Diamonds:</c> {}", quests10, quests15, quests20));
+			statDesc.append(fmt::format("\n\n<cl>10 Diamonds:</c> {}\n<cj>15 Diamonds:</c> {}\n<cf>20 Diamonds:</c> {}", addCommas(quests10), addCommas(quests15), addCommas(quests20)));
 		}
 		FLAlertLayer::create(statInfo[0].c_str(), statDesc.c_str(), "OK")->show();
 	}
@@ -395,13 +409,13 @@ public:
 		{
 			{"15", "Daily\nLevels", 0.6f, "gj_dailyCrown_001.png", 0.425f},
 			{"weekly", "Weekly\nDemons", 0.6f, "gj_weeklyCrown_001.png", 0.425f},
-			{"event", "Event\nLevels", 0.6f, "gj_eventCrown_001.png", 0.425f},
+			{"event", "Event\nLevels", 0.6f, "gj_eventCrown_001.png", 0.425f, true},
 			{"7", "Map\nPacks", 0.6f, "mapPacks.png"_spr, 0.425f},
 			{"40", "Gauntlets", 0.7f, "gauntlets.png"_spr, 0.425f, true},
 			{"41", "List\nRewards", 0.6f, "GJ_listAddBtn_001.png", 0.8f}
 		},
 		{
-			{"icon", "Icons", 0.7f, "particle_17_001.png", 1.3f, true},
+			{"icon", "Icons", 0.7f, "icons.png"_spr, 0.75f, true},
 			{"color", "Colors", 0.7f, "GJ_paintBtn_001.png", 0.75f, true},
 			{"special", "Special\nItems", 0.6f, "player_special_02_001.png", 0.8f, true},
 			{"bought", "Bought\nItems", 0.6f, "storeItemIcon_001.png", 1.2f, true}

@@ -28,6 +28,8 @@ To access some extra stats you need to press the <cg>+ Button</c> next to them!
 - Daily Levels
 - <cj>Weekly Demons</c>
 - <cj>Event Levels</c>
+	- <cj>Auto (1*), Easy (2*), Normal (3*), Hard (4*), Hard (5*)</c>
+	- <cj>Harder (6*), Harder (7*), Insane (8*), Insane (9*), Demon (10*)</c>
 - Map Packs
 - Gauntlets
 	- <cj>Completed Levels, Completed Demons</c>
@@ -56,7 +58,8 @@ This is my first mod, so some feedback would be nice!
 
 ## <co>Credits</c>
 - [Achievements Reimagined](mod:therisinglegend.achievements_reimagined) (By TheRisingLegend) - Inspiration for this mod, you should check it out!
-- [BetterInfo](mod:cvolton.betterinfo) (By cvolton) - Inspiration for quests stat, you should also check it out!
+- [BetterInfo](mod:cvolton.betterinfo) (By cvolton) - Inspiration for Quests stat, you should also check it out!
+- [Shopping List](mod:ml5.shopping-list) (By ML500) - Inspiration for Bought Items stat, you should also check it out!
 - [Geometry Dash Documentation](https://wyliemaster.github.io/gddocs/#/) (By WylieMaster) - Helped with GS Values and more!
 
 ## <cp>Previews</c>
@@ -71,3 +74,5 @@ This is my first mod, so some feedback would be nice!
 ![Preview 4](mateufil.improved-stats/preview4.png?width=299)
 
 ![Preview 5](mateufil.improved-stats/preview5.png?width=299)
+
+![Preview 6](mateufil.improved-stats/preview6.png?width=299)

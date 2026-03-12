@@ -1,3 +1,11 @@
+# <cl>v1.1.1</c>
+- Added extra stats to Event Levels:
+	- Auto (1*), Easy (2*), Normal (3*), Hard (4*), Hard (5*)
+	- Harder (6*), Harder (7*), Insane (8*), Insane (9*), Demon (10*)
+- Extra stats now display with commas
+- Updated Icons stat icon
+- Updated the mod's previews and credits
+
 # <cf>v1.1.0</c>
 - Added Icons stat with extra stats:
 	- Cubes, Ships, Balls, UFOs, Waves
@@ -12,13 +20,13 @@
 - Cleaned up the mod's description and changelog
 
 # <cj>v1.0.1</c>
-- Added stats to Official Levels:
+- Added extra stats to Official Levels:
 	- Main, Tower, Meltdown, World, SubZero, Other
-- Added stat to User Coins:
+- Added extra stat to User Coins:
 	- Unverified Coins
-- Added stat to Collected Diamonds:
+- Added extra stat to Collected Diamonds:
 	- Diamond Shards
-- Added stat to Collected Orbs:
+- Added extra stat to Collected Orbs:
 	- Current Orbs
 
 # <cl>v1.0.0</c>
