@@ -26,7 +26,36 @@ public:
 		return nullptr;
 	}
 
+	void loadPinnedStats() {
+		m_pinnedStats = Mod::get()->getSavedValue<std::vector<std::string>>("pinned", {});
+	}
+
+	void savePinnedStats() {
+		Mod::get()->setSavedValue<std::vector<std::string>>("pinned", m_pinnedStats);
+	}
+
+	bool isPinned(std::string stat) {
+		for (int i = 0; i < m_pinnedStats.size(); i++) {
+			if (m_pinnedStats[i] == stat) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	Stat getStat(std::string stat) {
+		for (int i = 0; i < m_statList.size(); i++) {
+			for (int j = 1; j < m_statList[i].size(); j++) {
+				if (m_statList[i][j].stat == stat) {
+					return m_statList[i][j];
+				}
+			}
+		}
+		return m_statList[1][1];
+	}
+
 	void goToPage(int page) {
+		m_currentPage = page;
 		for (int i = 0; i < m_statList.size(); i++) {
 			auto pageMenu = m_mainLayer->getChildByID("page-" + std::to_string(i));
 			auto navDotButton = static_cast<CCMenuItemSpriteExtra*>(m_navDotMenu->getChildByID("navdot-" + std::to_string(i)));
@@ -38,19 +67,30 @@ public:
 				navDotButton->setNormalImage(CCSprite::createWithSpriteFrameName("gj_navDotBtn_off_001.png"));
 			}
 		}
+		m_pageTitleLabel->setCString(m_statList[page][0].stat.c_str());
 	}
 
 	void onArrow(CCObject* sender) {
 		auto tag = sender->getTag();
 		if (tag == 0) {
 			m_currentPage--;
-			if (m_currentPage == -1) {
-				m_currentPage = m_statList.size()-1;
+			if (m_pinnedStats.size() == 0) {
+				if (m_currentPage == 0) {
+					m_currentPage = m_statList.size()-1;
+				}
+			} else {
+				if (m_currentPage == -1) {
+					m_currentPage = m_statList.size()-1;
+				}
 			}
 		} else if (tag == 1) {
 			m_currentPage++;
 			if (m_currentPage == m_statList.size()) {
-				m_currentPage = 0;
+				if (m_pinnedStats.size() == 0) {
+					m_currentPage = 1;
+				} else {
+					m_currentPage = 0;
+				}
 			}
 		}
 		goToPage(m_currentPage);
@@ -61,12 +101,21 @@ public:
 		goToPage(m_currentPage);
 	}
 
+	void onMainInfo(CCObject* sender) {
+		FLAlertLayer::create("Stats", "To access <cl>more info</c> about a <cy>stat</c> you can press it!\nStats with a <cp>+ symbol</c> may include <cg>extra stats</c> after accessing <cl>more info!</c>", "OK")->show();
+	}
+
+	void onStat(CCObject* sender) {
+		onInfo(static_cast<CCNode*>(sender)->getChildByID("stat")->getChildByID("button-menu")->getChildByID("info-button"));
+	}
+
 	void onInfo(CCObject* sender) {
-		auto statSprite = static_cast<CCNode*>(sender)->getParent()->getParent();
-		auto stat = statSprite->getID();
-		auto statInfo = m_statInfo[stat];
+		auto stat = static_cast<CCNode*>(sender)->getParent()->getParent()->getParent();
+		m_statInfoId = stat->getID();
+		auto statInfo = m_statInfo[m_statInfoId];
 		auto statDesc = statInfo[1];
-		if (stat == "3") { // Official Levels
+
+		if (m_statInfoId == "3") { // Official Levels
 			auto mainLevelsList = GameLevelManager::sharedState()->m_mainLevels;
 			auto mainLevels = 0;
 			auto mainCount = 0;
@@ -124,17 +173,17 @@ public:
 				subzeroLevels, subzeroCount,
 				otherLevels, otherCount
 			));
-		} else if (stat == "12") { // User Coins
+		} else if (m_statInfoId == "12") { // User Coins
 			statDesc.append(fmt::format("\n\n<co>Unverified Coins:</c> {}", addCommas(GameStatsManager::sharedState()->m_pendingUserCoins->count())));
-		} else if (stat == "13") { // Diamonds
+		} else if (m_statInfoId == "13") { // Diamonds
 			statDesc.append(fmt::format("\n\n<cf>Diamond Shards:</c> {}", addCommas(GameStatsManager::sharedState()->getStat("29"))));
-		} else if (stat == "22") { // Orbs
+		} else if (m_statInfoId == "22") { // Orbs
 			statDesc.append(fmt::format("\n\n<cl>Current Orbs:</c> {}", addCommas(GameStatsManager::sharedState()->getStat("14"))));
-		} else if (stat == "40") { // Gauntlets
+		} else if (m_statInfoId == "40") { // Gauntlets
 			auto gauntletLevels = GameLevelManager::sharedState()->getCompletedGauntletLevels();
 			auto gauntletDemons = GameLevelManager::sharedState()->getCompletedGauntletDemons();
 			statDesc.append(fmt::format("\n\n<cj>Completed Levels:</c> {}\n<cr>Completed Demons:</c> {}", gauntletLevels, gauntletDemons));
-		} else if (stat == "event") {
+		} else if (m_statInfoId == "event") {
 			statDesc.append(fmt::format(
 				"\n\n<cc>Auto (1*):</c> {}     <cj>Easy (2*):</c> {}\n<cg>Normal (3*):</c> {}     <cy>Hard (4*):</c> {}\n<cs>Hard (5*):</c> {}     <co>Harder (6*):</c> {}\n<cr>Harder (7*):</c> {}     <cp>Insane (8*):</c> {}\n<ca>Insane (9*):</c> {}     <c>_Demon (10*):</c> {}",
 				GameLevelManager::sharedState()->getCompletedEventLevels(1, 1),
@@ -148,7 +197,7 @@ public:
 				GameLevelManager::sharedState()->getCompletedEventLevels(9, 9),
 				GameLevelManager::sharedState()->getCompletedEventLevels(10, 10)
 			));
-		} else if (stat == "icon") {
+		} else if (m_statInfoId == "icon") {
 			auto maxAmount = 0;
 			auto cubeIcons = 0;
 			auto shipIcons = 0;
@@ -192,7 +241,7 @@ public:
 				swingIcons, GameManager::sharedState()->countForType(IconType::Swing),
 				jetpackIcons, GameManager::sharedState()->countForType(IconType::Jetpack)
 			));
-		} else if (stat == "color") {
+		} else if (m_statInfoId == "color") {
 			auto colors1 = 0;
 			auto colors2 = 0;
 			for (int i = 0; i < 107; i++) {
@@ -208,7 +257,7 @@ public:
 				colors1, 107,
 				colors2, 107
 			));
-		} else if (stat == "special") {
+		} else if (m_statInfoId == "special") {
 			auto maxAmount = 0;
 			auto special = 0;
 			auto shipFires = 0;
@@ -246,7 +295,7 @@ public:
 				items, m_specialItems.size(),
 				deathEffects, GameManager::sharedState()->countForType(IconType::DeathEffect)
 			));
-		} else if (stat == "bought") {
+		} else if (m_statInfoId == "bought") {
 			auto normalItems = 0;
 			auto normalCount = 0;
 			auto secretItems = 0;
@@ -313,7 +362,7 @@ public:
 				diamondItems, diamondCount,
 				pathItems, pathCount
 			));
-		} else if (stat == "achievement") {
+		} else if (m_statInfoId == "achievement") {
 			auto achievements = AchievementManager::sharedState()->m_allAchievements;
 			auto mainAchievements = 0;
 			auto mainCount = 0;
@@ -360,7 +409,7 @@ public:
 				worldAchievements, worldCount,
 				subzeroAchievements, subzeroCount
 			));
-		} else if (stat == "quest") {
+		} else if (m_statInfoId == "quest") {
 			auto quests10 = 0;
 			auto quests15 = 0;
 			auto quests20 = 0;
@@ -378,7 +427,70 @@ public:
 			}
 			statDesc.append(fmt::format("\n\n<cl>10 Diamonds:</c> {}\n<cj>15 Diamonds:</c> {}\n<cf>20 Diamonds:</c> {}", addCommas(quests10), addCommas(quests15), addCommas(quests20)));
 		}
-		FLAlertLayer::create(statInfo[0].c_str(), statDesc.c_str(), "OK")->show();
+
+		auto alert = FLAlertLayer::create(statInfo[0].c_str(), statDesc.c_str(), "OK");
+		alert->show();
+
+		CCSprite* pinButtonSprite;
+		auto pinButtonTag = 0;
+		if (isPinned(m_statInfoId)) {
+			pinButtonSprite = CCSprite::createWithSpriteFrameName("unpin.png"_spr);
+			pinButtonTag = 1;
+		} else {
+			pinButtonSprite = CCSprite::createWithSpriteFrameName("pin.png"_spr);
+		}
+		auto pinButton = CCMenuItemSpriteExtra::create(
+			pinButtonSprite,
+			this,
+			menu_selector(StatsPage::onPin)
+		);
+		pinButton->setID("pin-button"_spr);
+		pinButton->setTag(pinButtonTag);
+		pinButton->setPosition({125.f, alert->m_mainLayer->getChildByID("background")->getContentHeight() - 55.f});
+		alert->m_mainLayer->getChildByID("main-menu")->addChild(pinButton);
+	}
+
+	void onPin(CCObject* sender) {
+		auto pinButton = static_cast<CCMenuItemSpriteExtra*>(sender);
+		auto tag = pinButton->getTag();
+		if (tag == 0) {
+			createQuickPopup("Pin Stat", fmt::format("Do you want to <cg>pin</c> the <cy>{}</c> stat?\nThis will <cg>add</c> the stat to the <cj>first page</c> of the <cl>Stats Menu</c>.", m_statInfo[m_statInfoId][0]), "Pin", "Cancel", [&, pinButton](auto, bool button2) {
+				if (not button2) {
+					m_pinnedStats.push_back(m_statInfoId);
+					pinButton->setTag(1);
+					pinButton->setNormalImage(CCSprite::createWithSpriteFrameName("unpin.png"_spr));
+					savePinnedStats();
+
+					auto pinPage = m_mainLayer->getChildByID("page-0");
+					pinPage->addChild(createStat(getStat(m_statInfoId)));
+					pinPage->updateLayout();
+					m_navDotMenu->getChildByID("navdot-0")->setVisible(true);
+					m_navDotMenu->updateLayout();
+				}
+			}, true, true);
+		} else if (tag == 1) {
+			createQuickPopup("Unpin Stat", fmt::format("Do you want to <cr>unpin</c> the <cy>{}</c> stat?\nThis will <cr>remove</c> the stat from the <cj>first page</c> of the <cl>Stats Menu</c>.", m_statInfo[m_statInfoId][0]), "Unpin", "Cancel", [&, pinButton](auto, bool button2) {
+				if (not button2) {
+					for (int i = 0; i < m_pinnedStats.size(); i++) {
+						if (m_pinnedStats[i] == m_statInfoId) {
+							m_pinnedStats.erase(m_pinnedStats.begin() + i);
+						}
+					}
+					pinButton->setTag(0);
+					pinButton->setNormalImage(CCSprite::createWithSpriteFrameName("pin.png"_spr));
+					savePinnedStats();
+				
+					auto pinPage = m_mainLayer->getChildByID("page-0");
+					pinPage->removeChildByID(m_statInfoId);
+					pinPage->updateLayout();
+					if (m_pinnedStats.size() == 0) {
+						m_navDotMenu->getChildByID("navdot-0")->setVisible(false);
+						m_navDotMenu->updateLayout();
+						goToPage(1);
+					}
+				}
+			}, true, true);
+		}
 	}
 
 	std::string addCommas(int number) {
@@ -389,8 +501,173 @@ public:
 		return numberString;
 	}
 
+	CCMenuItemSpriteExtra* createStat(Stat statData) {
+		auto stat = statData.stat;
+
+		// Stat
+		auto statSprite = CCScale9Sprite::create("square02b_001.png");
+		statSprite->setID("stat");
+		statSprite->setContentSize({120.f, 70.f});
+		statSprite->setColor({130, 64, 33});
+
+		// Title Menu
+		auto titleMenu = CCMenu::create();
+		titleMenu->setID("title-menu");
+		titleMenu->setLayout(
+			RowLayout::create()
+		);
+		titleMenu->setPosition({5.f, 55.f});
+		titleMenu->setAnchorPoint({0.f, 0.5f});
+		titleMenu->setContentSize({110.f, 30.f});
+		statSprite->addChild(titleMenu);
+
+		// Icon
+		auto iconSprite = CCSprite::createWithSpriteFrameName(statData.icon.c_str());
+		iconSprite->setLayoutOptions(
+			AxisLayoutOptions::create()
+				->setScaleLimits(statData.iconScale, statData.iconScale)
+		);
+		titleMenu->addChild(iconSprite);
+
+		// Title
+		auto titleLabel = CCLabelBMFont::create(statData.title.c_str(), "goldFont.fnt");
+		titleLabel->setLayoutOptions(
+			AxisLayoutOptions::create()
+				->setScaleLimits(0.f, statData.titleScale)
+		);
+		titleMenu->addChild(titleLabel);
+
+		titleMenu->updateLayout();
+
+		// Value
+		auto value = 0;
+		if (stat == "weekly") {
+			value = GameLevelManager::sharedState()->getCompletedWeeklyLevels();
+		} else if (stat == "event") {
+			value = GameLevelManager::sharedState()->getCompletedEventLevels(1, 10);
+		} else if (stat == "icon") {
+			for (int i  = 0; i < m_iconTypes.size(); i++) {
+				for (int j = 1; j <= GameManager::sharedState()->countForType(m_iconTypes[i]); j++) {
+					if (GameManager::sharedState()->isIconUnlocked(j, m_iconTypes[i])) {
+						value++;
+					}
+				}
+			}
+		} else if (stat == "color") {
+			for (int i = 0; i < 107; i++) {
+				if (GameManager::sharedState()->isColorUnlocked(i, UnlockType::Col1)) {
+					value++;
+				}
+				if (GameManager::sharedState()->isColorUnlocked(i, UnlockType::Col2)) {
+					value++;
+				}
+			}
+		} else if (stat == "special") {
+			for (int i  = 0; i < m_specialTypes.size(); i++) {
+				auto specialType = m_specialTypes[i];
+				if (specialType == IconType::Item) {
+					for (int j = 0; j < m_specialItems.size(); j++) {
+						if (GameStatsManager::sharedState()->isItemUnlocked(UnlockType::GJItem, m_specialItems[j])) {
+							value++;
+						}
+					}
+				} else {
+					for (int j = 1; j <= GameManager::sharedState()->countForType(specialType); j++) {
+						if (GameManager::sharedState()->isIconUnlocked(j, m_specialTypes[i])) {
+							value++;
+						}
+					}
+				}
+			}
+		} else if (stat == "bought") {
+			for (auto item : CCArrayExt<GJStoreItem>(GameStatsManager::sharedState()->m_storeItemArray)) {
+				if (GameStatsManager::sharedState()->isStoreItemUnlocked(item->m_index)) {
+					value++;
+				}
+			}
+		} else if (stat == "achievement") {
+			for (auto achievement : CCArrayExt<CCDictionary>(AchievementManager::sharedState()->m_allAchievements)) {
+				if (AchievementManager::sharedState()->isAchievementEarned(achievement->valueForKey("identifier")->getCString())) {
+					value++;
+				}
+			}
+		} else if (stat == "quest") {
+			for (auto [key, data] : CCDictionaryExt<std::string_view, CCString>(GameStatsManager::sharedState()->m_challengeDiamonds)) {
+				if (key[0] == 'c') {
+					value++;
+				}
+			}
+		} else {
+			value = GameStatsManager::sharedState()->getStat(stat.c_str());
+		}
+		auto valueLabel = CCLabelBMFont::create(addCommas(value).c_str(), "bigFont.fnt");
+		valueLabel->setPosition({60.f, 20.f});
+		valueLabel->limitLabelWidth(110.f, 0.8f, 0.f);
+		statSprite->addChild(valueLabel);
+
+		// More Sprite
+		auto moreSprite = CCSprite::createWithSpriteFrameName("more.png"_spr);
+		moreSprite->setPosition({113.f, 7.f});
+		moreSprite->setScale(0.6f);
+		moreSprite->setVisible(false);
+		statSprite->addChild(moreSprite);
+
+		// Stat Button Menu
+		auto statButtonMenu = CCMenu::create();
+		statButtonMenu->setID("button-menu");
+		statButtonMenu->setPosition({0.f, 0.f});
+		statButtonMenu->setContentSize({120.f, 70.f});
+		statSprite->addChild(statButtonMenu);
+
+		// Info Button
+		CCSprite* infoButtonSprite;
+		auto infoButtonScale = 0.5f;
+		if (statData.more) {
+			infoButtonSprite = CCSprite::createWithSpriteFrameName("GJ_plus2Btn_001.png");
+			infoButtonScale = 0.7f;
+		} else {
+			infoButtonSprite = CCSprite::createWithSpriteFrameName("GJ_infoIcon_001.png");
+		}
+		auto infoButton = CCMenuItemSpriteExtra::create(
+			infoButtonSprite,
+			this,
+			menu_selector(StatsPage::onInfo)
+		);
+		infoButton->setID("info-button");
+		infoButton->setPosition({113.f, 7.f});
+		infoButton->setScale(infoButtonScale);
+		infoButton->m_baseScale = infoButtonScale;
+		statButtonMenu->addChild(infoButton);
+
+		if (not Mod::get()->getSettingValue<bool>("info-buttons")) {
+			if (statData.more) {
+				moreSprite->setVisible(true);
+			}
+			infoButton->setVisible(false);
+		}
+
+		// Stat Button
+		auto statButton = CCMenuItemSpriteExtra::create(
+			statSprite,
+			this,
+			menu_selector(StatsPage::onStat)
+		);
+		statButton->setID(stat);
+		statButton->setLayoutOptions(
+			AxisLayoutOptions::create()
+				->setScaleLimits(0.f, 1.f)
+		);
+		statButton->m_scaleMultiplier = 1.15f;
+
+		return statButton;
+	}
+
 	std::vector<std::vector<Stat>> m_statList = {
 		{
+			{"Pinned"}
+		},
+		{
+			{"Basic"},
 			{"1", "Jumps", 0.7f, "GJ_orderUpBtn_001.png", 0.55f},
 			{"2", "Attempts", 0.7f, "GJ_updateBtn_001.png", 0.55f},
 			{"42", "Insane\nLevels", 0.6f, "diffIcon_05_btn_001.png", 0.8f},
@@ -399,6 +676,7 @@ public:
 			{"5", "Demon\nLevels", 0.6f, "diffIcon_06_btn_001.png", 0.8f},
 		},
 		{
+			{"Collectibles"},
 			{"6", "Stars", 0.7f, "GJ_bigStar_noShadow_001.png", 0.6f},
 			{"28", "Moons", 0.7f, "GJ_bigMoon_noShadow_001.png", 0.6f},
 			{"13", "Collected\nDiamonds", 0.6f, "GJ_bigDiamond_noShadow_001.png", 0.6f, true},
@@ -407,6 +685,7 @@ public:
 			{"22", "Collected\nOrbs", 0.6f, "currencyOrbIcon_001.png", 1.2f, true}
 		},
 		{
+			{"Completions"},
 			{"15", "Daily\nLevels", 0.6f, "gj_dailyCrown_001.png", 0.425f},
 			{"weekly", "Weekly\nDemons", 0.6f, "gj_weeklyCrown_001.png", 0.425f},
 			{"event", "Event\nLevels", 0.6f, "gj_eventCrown_001.png", 0.425f, true},
@@ -415,13 +694,15 @@ public:
 			{"41", "List\nRewards", 0.6f, "GJ_listAddBtn_001.png", 0.8f}
 		},
 		{
+			{"Icons"},
 			{"icon", "Icons", 0.7f, "icons.png"_spr, 0.75f, true},
 			{"color", "Colors", 0.7f, "GJ_paintBtn_001.png", 0.75f, true},
 			{"special", "Special\nItems", 0.6f, "player_special_02_001.png", 0.8f, true},
 			{"bought", "Bought\nItems", 0.6f, "storeItemIcon_001.png", 1.2f, true}
 		},
 		{
-			{"10", "Liked/Disliked\nLevels", 0.6f, "GJ_like2Btn_001.png", 0.55f},
+			{"Other"},
+			{"10", "Liked\nLevels", 0.6f, "GJ_like2Btn_001.png", 0.55f},
 			{"11", "Rated\nLevels", 0.6f, "GJ_starBtn_001.png", 0.55f},
 			{"9", "Destroyed\nPlayers", 0.6f, "particle_17_001.png", 1.3f},
 			{"achievement", "Achievements", 0.7f, "rankIcon_1_001.png", 0.9f, true},
@@ -439,7 +720,7 @@ public:
 		{"7", {"Map Packs", "Total amount of completed <cg>Map Packs</c>."}},
 		{"8", {"Secret Coins", "Total amount of collected <co>Secret Coins</c>.\nMaximum amount is <cp>164</c>."}},
 		{"9", {"Destroyed Players", "Total amount of <co>Destroyed Players</c> on the <cl>Main Menu</c>."}},
-		{"10", {"Liked/Disliked Levels", "Total amount of <cp>Liked or Disliked</c> <cj>Online Levels</c>."}},
+		{"10", {"Liked Levels", "Total amount of <cp>Liked or Disliked</c> <cj>Online Levels</c>."}},
 		{"11", {"Rated Levels", "Total amount of <cy>Rated</c> <cj>Online Levels</c>."}},
 		{"12", {"User Coins", "Total amount of collected <cc>User Coins</c>."}},
 		{"13", {"Collected Diamonds", "Total amount of collected <cf>Diamonds</c>."}},
@@ -484,19 +765,27 @@ public:
 		20 // Spider Anim
 	};
 
+	std::vector<std::string> m_pinnedStats {};
+
 	int m_currentPage = 0;
+	ZStringView m_statInfoId = "1";
 
 	CCMenu* m_navDotMenu;
+	CCLabelBMFont* m_pageTitleLabel;
 protected:
 	bool init() {
 		if (!Popup::init(400.f, 250.f)) {
 			return false;
 		}
+
+		loadPinnedStats();
+
 		setTitle("Stats", "bigFont.fnt", 1.f);
 
 		// Button Menu
 		auto buttonMenu = CCMenu::create();
 		buttonMenu->setID("button-menu");
+		buttonMenu->setZOrder(10);
 		buttonMenu->setPosition({0.f, 0.f});
 		buttonMenu->setContentSize({400.f, 250.f});
 		m_mainLayer->addChild(buttonMenu);
@@ -526,9 +815,20 @@ protected:
 		previousButton->setPosition({-25.f, 125.f});
 		buttonMenu->addChild(previousButton);
 
+		// Info Button
+		auto infoButton = CCMenuItemSpriteExtra::create(
+			CCSprite::createWithSpriteFrameName("GJ_infoIcon_001.png"),
+			this,
+			menu_selector(StatsPage::onMainInfo)
+		);
+		infoButton->setID("info-button");
+		infoButton->setPosition({25.f, 25.f});
+		buttonMenu->addChild(infoButton);
+
 		// Nav Dot Menu
 		m_navDotMenu = CCMenu::create();
 		m_navDotMenu->setID("navdot-menu");
+		m_navDotMenu->setZOrder(10);
 		m_navDotMenu->setLayout(
 			RowLayout::create()
 				->setGap(10.f)
@@ -537,6 +837,12 @@ protected:
 		m_navDotMenu->setAnchorPoint({0.f, 0.f});
 		m_navDotMenu->setContentSize({400.f, 20.f});
 		m_mainLayer->addChild(m_navDotMenu);
+
+		// Page Title
+		m_pageTitleLabel = CCLabelBMFont::create("Basic", "goldFont.fnt");
+		m_pageTitleLabel->setPosition({200.f, 205.f});
+		m_pageTitleLabel->setScale(0.75f);
+		m_mainLayer->addChild(m_pageTitleLabel);
 
 		// Pages
 		for (int i = 0; i < m_statList.size(); i++) {
@@ -549,8 +855,8 @@ protected:
 					->setGrowCrossAxis(true)
 					->setCrossAxisOverflow(false)
 			);
-			pageMenu->setPosition({200.f, 122.f});
-			pageMenu->setContentSize({380.f, 170.f});
+			pageMenu->setPosition({200.f, 117.f});
+			pageMenu->setContentSize({380.f, 160.f});
 			pageMenu->setVisible(false);
 			m_mainLayer->addChild(pageMenu);
 
@@ -566,138 +872,15 @@ protected:
 			m_navDotMenu->addChild(navDotButton);
 
 			// Stats
-			for (int j = 0; j < m_statList[i].size(); j++) {
-				auto stat = m_statList[i][j].stat;
-
-				// Stat
-				auto statSprite = CCScale9Sprite::create("square02_001.png");
-				statSprite->setID(stat);
-				statSprite->setContentSize({120.f, 70.f});
-				statSprite->setOpacity(50);
-				pageMenu->addChild(statSprite);
-
-				// Title Menu
-				auto titleMenu = CCMenu::create();
-				titleMenu->setID("title-menu");
-				titleMenu->setLayout(
-					RowLayout::create()
-				);
-				titleMenu->setPosition({5.f, 55.f});
-				titleMenu->setAnchorPoint({0.f, 0.5f});
-				titleMenu->setContentSize({110.f, 30.f});
-				statSprite->addChild(titleMenu);
-
-				// Icon
-				auto iconSprite = CCSprite::createWithSpriteFrameName(m_statList[i][j].icon.c_str());
-				iconSprite->setLayoutOptions(
-					AxisLayoutOptions::create()
-						->setScaleLimits(m_statList[i][j].iconScale, m_statList[i][j].iconScale)
-				);
-				titleMenu->addChild(iconSprite);
-
-				// Title
-				auto titleLabel = CCLabelBMFont::create(m_statList[i][j].title.c_str(), "goldFont.fnt");
-				titleLabel->setLayoutOptions(
-					AxisLayoutOptions::create()
-						->setScaleLimits(0.f, m_statList[i][j].titleScale)
-				);
-				titleMenu->addChild(titleLabel);
-
-				titleMenu->updateLayout();
-
-				// Value
-				auto value = 0;
-				if (stat == "weekly") {
-					value = GameLevelManager::sharedState()->getCompletedWeeklyLevels();
-				} else if (stat == "event") {
-					value = GameLevelManager::sharedState()->getCompletedEventLevels(1, 10);
-				} else if (stat == "icon") {
-					for (int k  = 0; k < m_iconTypes.size(); k++) {
-						for (int l = 1; l <= GameManager::sharedState()->countForType(m_iconTypes[k]); l++) {
-							if (GameManager::sharedState()->isIconUnlocked(l, m_iconTypes[k])) {
-								value++;
-							}
-						}
-					}
-				} else if (stat == "color") {
-					for (int k = 0; k < 107; k++) {
-						if (GameManager::sharedState()->isColorUnlocked(k, UnlockType::Col1)) {
-							value++;
-						}
-						if (GameManager::sharedState()->isColorUnlocked(k, UnlockType::Col2)) {
-							value++;
-						}
-					}
-				} else if (stat == "special") {
-					for (int k  = 0; k < m_specialTypes.size(); k++) {
-						auto specialType = m_specialTypes[k];
-						if (specialType == IconType::Item) {
-							for (int l = 0; l < m_specialItems.size(); l++) {
-								if (GameStatsManager::sharedState()->isItemUnlocked(UnlockType::GJItem, m_specialItems[l])) {
-									value++;
-								}
-							}
-						} else {
-							for (int l = 1; l <= GameManager::sharedState()->countForType(specialType); l++) {
-								if (GameManager::sharedState()->isIconUnlocked(l, m_specialTypes[k])) {
-									value++;
-								}
-							}
-						}
-					}
-				} else if (stat == "bought") {
-					for (auto item : CCArrayExt<GJStoreItem>(GameStatsManager::sharedState()->m_storeItemArray)) {
-						if (GameStatsManager::sharedState()->isStoreItemUnlocked(item->m_index)) {
-							value++;
-						}
-					}
-				} else if (stat == "achievement") {
-					for (auto achievement : CCArrayExt<CCDictionary>(AchievementManager::sharedState()->m_allAchievements)) {
-						if (AchievementManager::sharedState()->isAchievementEarned(achievement->valueForKey("identifier")->getCString())) {
-							value++;
-						}
-					}
-				} else if (stat == "quest") {
-					for (auto [key, data] : CCDictionaryExt<std::string_view, CCString>(GameStatsManager::sharedState()->m_challengeDiamonds)) {
-						if (key[0] == 'c') {
-							value++;
-						}
-					}
-				} else {
-					value = GameStatsManager::sharedState()->getStat(stat.c_str());
+			if (i == 0) { // Pinned
+				for (int j = 0; j < m_pinnedStats.size(); j++) {
+					auto stat = createStat(getStat(m_pinnedStats[j]));
+					pageMenu->addChild(stat);
 				}
-				auto valueLabel = CCLabelBMFont::create(addCommas(value).c_str(), "bigFont.fnt");
-				valueLabel->setPosition({60.f, 20.f});
-				valueLabel->limitLabelWidth(110.f, 0.8f, 0.f);
-				statSprite->addChild(valueLabel);
-
-				// Stat Button Menu
-				auto statButtonMenu = CCMenu::create();
-				statButtonMenu->setID("button-menu");
-				statButtonMenu->setPosition({0.f, 0.f});
-				statButtonMenu->setContentSize({120.f, 70.f});
-				statSprite->addChild(statButtonMenu);
-
-				// Info Button
-				if (Mod::get()->getSettingValue<bool>("info-buttons") or m_statList[i][j].more) {
-					CCSprite* infoButtonSprite;
-					auto infoButtonScale = 0.5f;
-					if (m_statList[i][j].more) {
-						infoButtonSprite = CCSprite::createWithSpriteFrameName("GJ_plus2Btn_001.png");
-						infoButtonScale = 0.7f;
-					} else {
-						infoButtonSprite = CCSprite::createWithSpriteFrameName("GJ_infoIcon_001.png");
-					}
-					auto infoButton = CCMenuItemSpriteExtra::create(
-						infoButtonSprite,
-						this,
-						menu_selector(StatsPage::onInfo)
-					);
-					infoButton->setID("info-button");
-					infoButton->setPosition({113.f, 7.f});
-					infoButton->setScale(infoButtonScale);
-					infoButton->m_baseScale = infoButtonScale;
-					statButtonMenu->addChild(infoButton);
+			} else {
+				for (int j = 1; j < m_statList[i].size(); j++) {
+					auto stat = createStat(m_statList[i][j]);
+					pageMenu->addChild(stat);
 				}
 			}
 			pageMenu->updateLayout();
@@ -728,7 +911,13 @@ protected:
 		bottomRightCornerSprite->setFlipX(true);
 		m_mainLayer->addChild(bottomRightCornerSprite);
 
-		goToPage(0);
+		if (m_pinnedStats.size() == 0) {
+			m_navDotMenu->getChildByID("navdot-0")->setVisible(false);
+			m_navDotMenu->updateLayout();
+			goToPage(1);
+		} else {
+			goToPage(0);
+		}
 		
 		return true;
 	}

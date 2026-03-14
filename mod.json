@@ -8,15 +8,18 @@
 	},
 	"id": "mateufil.improved-stats",
 	"name": "Improved Stats",
-	"version": "v1.1.1",
+	"version": "v1.2.0",
 	"developer": "Mateufil",
 	"description": "Improves the Stats Menu!",
+	"dependencies": {
+		"geode.node-ids": ">=v1.22.0"
+	},
 	"settings": {
 		"info-buttons": {
 			"type": "bool",
 			"name": "Stat Info Buttons",
-			"description": "Controls whether info buttons for stats are shown or not.\n\nThis does not apply to stats with extra info.",
-			"default": true
+			"description": "Controls whether info buttons for stats are shown or not.",
+			"default": false
 		}
 	},
 	"resources": {
