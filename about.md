@@ -16,7 +16,7 @@ To access some extra stats you need to press the stat with a <cg>+ symbol</c> ne
 - Official Levels
 	- <cj>Main, Tower, Meltdown, World, SubZero, Other</c>
 - User Levels
-- Insane levels
+- Insane Levels
 - Demon Levels
 
 ### Collectibles
@@ -52,6 +52,17 @@ To access some extra stats you need to press the stat with a <cg>+ symbol</c> ne
 - <cj>Bought Items</c>
 	- <cj>Normal, Secret, Community, Mechanic, Diamond, Paths</c>
 
+### Chests
+- <cj>Daily Chests</c>
+	- <cj>4 Hour Chests, 24 Hour Chests</c>
+- <cj>Treasure Chests</c>
+	- <cj>1 Key, 5 Key, 10 Key, 25 Key, 50 Key, 100 Key, Gold</c>
+- <cj>Reward Chests</c>
+	- <cj>Weekly, Event, Gauntlet, Path</c>
+- <cj>Vault Chests</c>
+- <cj>Other Chests</c>
+	- <cj>Special Chests, Social Chests, Ad Chests</c>
+
 ### Other
 - Liked/Disliked Levels
 - Rated Levels
@@ -73,9 +84,9 @@ If you have any feedback or suggestions for this mod, you can message me on GD t
 
 This is my first mod, so some feedback would be nice!
 
-## <cr>Credits</c>
+## <cr>Special Thanks</c>
 - [Achievements Reimagined](mod:therisinglegend.achievements_reimagined) (By TheRisingLegend) - Inspiration for this mod, you should check it out!
-- [BetterInfo](mod:cvolton.betterinfo) (By cvolton) - Inspiration for Quests stat, you should also check it out!
+- [BetterInfo](mod:cvolton.betterinfo) (By cvolton) - Inspiration for Chest stats & Quests stat, you should also check it out!
 - [Shopping List](mod:ml5.shopping-list) (By ML500) - Inspiration for Bought Items stat, you should also check it out!
 - [Geometry Dash Documentation](https://wyliemaster.github.io/gddocs/#/) (By WylieMaster) - Helped with GS Values and more!
 

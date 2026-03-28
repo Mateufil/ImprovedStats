@@ -252,11 +252,7 @@ public:
 					colors2++;
 				}
 			}
-			statDesc.append(fmt::format(
-				"\n\n<cy>Main Colors:</c> {} / {}\n<cp>Secondary Colors:</c> {} / {}",
-				colors1, 107,
-				colors2, 107
-			));
+			statDesc.append(fmt::format("\n\n<cy>Main Colors:</c> {} / {}\n<cp>Secondary Colors:</c> {} / {}", colors1, 107, colors2, 107));
 		} else if (m_statInfoId == "special") {
 			auto maxAmount = 0;
 			auto special = 0;
@@ -362,6 +358,70 @@ public:
 				diamondItems, diamondCount,
 				pathItems, pathCount
 			));
+		} else if (m_statInfoId == "daily") {
+			auto daily4 = 0;
+			auto daily24 = 0;
+			for (auto [key, data] : CCDictionaryExt<std::string_view, CCString>(GameStatsManager::sharedState()->m_dailyChests)) {
+				if (key[0] == '1') {
+					daily4++;
+				} else if (key[0] == '2') {
+					daily24++;
+				}
+			}
+			statDesc.append(fmt::format("\n\n<co>4 Hour Chests:</c> {}\n<cj>24 Hour Chests:</c> {}", addCommas(daily4), addCommas(daily24)));
+		} else if (m_statInfoId == "treasure") {
+			auto allCount = 0;
+			for (int i = 0; i < m_treasureTypes.size(); i++) {
+				allCount += GameStatsManager::sharedState()->countSecretChests(m_treasureTypes[i]);
+			}
+			statDesc.append(fmt::format(
+				"\nMaximum amount is <cp>{}</c>.\n\n<cr>1 Key:</c> {} / {}     <ca>5 Key:</c> {} / {}\n<cy>10 Key:</c> {} / {}     <cj>25 Key:</c> {} / {}\n<cg>50 Key:</c> {} / {}     <cp>100 Key:</c> {} / {}\n<cs>Gold:</c> {} / {}",
+				allCount,
+				GameStatsManager::sharedState()->countUnlockedSecretChests(GJRewardType::SmallTreasure), GameStatsManager::sharedState()->countSecretChests(GJRewardType::SmallTreasure),
+				GameStatsManager::sharedState()->countUnlockedSecretChests(GJRewardType::LargeTreasure), GameStatsManager::sharedState()->countSecretChests(GJRewardType::LargeTreasure),
+				GameStatsManager::sharedState()->countUnlockedSecretChests(GJRewardType::Key10Treasure), GameStatsManager::sharedState()->countSecretChests(GJRewardType::Key10Treasure),
+				GameStatsManager::sharedState()->countUnlockedSecretChests(GJRewardType::Key25Treasure), GameStatsManager::sharedState()->countSecretChests(GJRewardType::Key25Treasure),
+				GameStatsManager::sharedState()->countUnlockedSecretChests(GJRewardType::Key50Treasure), GameStatsManager::sharedState()->countSecretChests(GJRewardType::Key50Treasure),
+				GameStatsManager::sharedState()->countUnlockedSecretChests(GJRewardType::Key100Treasure), GameStatsManager::sharedState()->countSecretChests(GJRewardType::Key100Treasure),
+				GameStatsManager::sharedState()->countUnlockedSecretChests(GJRewardType::Gold), GameStatsManager::sharedState()->countSecretChests(GJRewardType::Gold)
+			));
+		} else if (m_statInfoId == "reward") {
+			auto eventChests = 0;
+			auto gauntletChests = 0;
+			auto pathChests = 0;
+			for (auto [key, data] : CCDictionaryExt<std::string_view, CCString>(GameStatsManager::sharedState()->m_miscChests)) {
+				if (key[0] == 'd') {
+					eventChests++;
+				} else if (key[0] == 'g') {
+					gauntletChests++;
+				} else if (key[0] == 'p') {
+					pathChests++;
+				}
+			}
+			statDesc.append(fmt::format(
+				"\n\n<cr>Weekly:</c> {}     <cp>Event:</c> {}\n<co>Gauntlet:</c> {}     <cy>Path:</c> {} / {}",
+				GameStatsManager::sharedState()->m_weeklyChest->count(),
+				eventChests,
+				gauntletChests,
+				pathChests, 10
+			));
+		} else if (m_statInfoId == "other") {
+			auto specialChests = 0;
+			auto socialChests = 0;
+			auto adChests = 0;
+			for (auto [key, data] : CCDictionaryExt<std::string_view, CCString>(GameStatsManager::sharedState()->m_miscChests)) {
+				if (key[0] == '0') {
+					auto id = utils::numFromString<int>(key).unwrapOr(0);
+					if ((id >= 7 && id <= 11) || id == 24) {
+						socialChests++;
+					} else if (id >= 12 && id <= 21) {
+						adChests++;
+					} else if (id > 0) {
+						specialChests++;
+					}
+				}
+			}
+			statDesc.append(fmt::format("\n\n<cy>Special Chests:</c> {}\n<cj>Social Chests:</c> {} / {}\n<cp>Ad Chests:</c> {} / {}", specialChests, socialChests, 6, adChests, 10));
 		} else if (m_statInfoId == "achievement") {
 			auto achievements = AchievementManager::sharedState()->m_allAchievements;
 			auto mainAchievements = 0;
@@ -428,7 +488,7 @@ public:
 			statDesc.append(fmt::format("\n\n<cl>10 Diamonds:</c> {}\n<cj>15 Diamonds:</c> {}\n<cf>20 Diamonds:</c> {}", addCommas(quests10), addCommas(quests15), addCommas(quests20)));
 		}
 
-		auto alert = FLAlertLayer::create(statInfo[0].c_str(), statDesc.c_str(), "OK");
+		auto alert = FLAlertLayer::create(nullptr, statInfo[0].c_str(), statDesc.c_str(), "OK", nullptr, 330.f);
 		alert->show();
 
 		CCSprite* pinButtonSprite;
@@ -446,7 +506,7 @@ public:
 		);
 		pinButton->setID("pin-button"_spr);
 		pinButton->setTag(pinButtonTag);
-		pinButton->setPosition({125.f, alert->m_mainLayer->getChildByID("background")->getContentHeight() - 55.f});
+		pinButton->setPosition({140.f, alert->m_mainLayer->getChildByID("background")->getContentHeight() - 55.f});
 		alert->m_mainLayer->getChildByID("main-menu")->addChild(pinButton);
 	}
 
@@ -585,6 +645,31 @@ public:
 					value++;
 				}
 			}
+		} else if (stat == "daily") {
+			value = GameStatsManager::sharedState()->m_dailyChests->count();
+		} else if (stat == "treasure") {
+			for (int i = 0; i < m_treasureTypes.size(); i++) {
+				value += GameStatsManager::sharedState()->countUnlockedSecretChests(m_treasureTypes[i]);
+			}
+		} else if (stat == "reward") {
+			value += GameStatsManager::sharedState()->m_weeklyChest->count();
+			for (auto [key, data] : CCDictionaryExt<std::string_view, CCString>(GameStatsManager::sharedState()->m_miscChests)) {
+				if (key[0] == 'd' || key[0] == 'g' || key[0] == 'p') {
+					value++;
+				}
+			}
+		} else if (stat == "vault") {
+			for (auto [key, data] : CCDictionaryExt<std::string_view, CCString>(GameStatsManager::sharedState()->m_miscChests)) {
+				if (key[0] == 'o') {
+					value++;
+				}
+			}
+		} else if (stat == "other") {
+			for (auto [key, data] : CCDictionaryExt<std::string_view, CCString>(GameStatsManager::sharedState()->m_miscChests)) {
+				if (key[0] == '0') {
+					value++;
+				}
+			}
 		} else if (stat == "achievement") {
 			for (auto achievement : CCArrayExt<CCDictionary>(AchievementManager::sharedState()->m_allAchievements)) {
 				if (AchievementManager::sharedState()->isAchievementEarned(achievement->valueForKey("identifier")->getCString())) {
@@ -701,6 +786,14 @@ public:
 			{"bought", "Bought\nItems", 0.6f, "storeItemIcon_001.png", 1.2f, true}
 		},
 		{
+			{"Chests"},
+			{"daily", "Daily\nChests", 0.6f, "GJ_dailyRewardBtn_001.png", 0.65f, true},
+			{"treasure", "Treasure\nChests", 0.6f, "chest_04_02_001.png", 0.25f, true},
+			{"reward", "Reward\nChests", 0.6f, "chest_06_02_001.png", 0.25f, true},
+			{"vault", "Vault\nChests", 0.6f, "chest_09_02_001.png", 0.25f},
+			{"other", "Other\nChests", 0.6f, "chest_01_02_001.png", 0.3f, true},
+		},
+		{
 			{"Other"},
 			{"10", "Liked\nLevels", 0.6f, "GJ_like2Btn_001.png", 0.55f},
 			{"11", "Rated\nLevels", 0.6f, "GJ_starBtn_001.png", 0.55f},
@@ -736,6 +829,11 @@ public:
 		{"color", {"Colors", "Total amount of unlocked <cg>Colors</c>.\nMaximum amount is <cp>214</c>."}},
 		{"special", {"Special Items", "Total amount of unlocked <cg>Trails, Ship Fires, Animations & Death Effects</c>."}},
 		{"bought", {"Bought Items", "Total amount of bought <cg>Icons & Items</c>."}},
+		{"daily", {"Daily Chests", "Total amount of opened <cg>Daily Chests</c>."}},
+		{"treasure", {"Treasure Chests", "Total amount of opened <cg>Treasure Chests</c>."}},
+		{"reward", {"Reward Chests", "Total amount of opened <cg>Reward Chests</c>."}},
+		{"vault", {"Vault Chests", "Total amount of opened <cg>Wraith Chests</c>."}},
+		{"other", {"Other Chests", "Total amount of opened <cg>Special, Social & Ad Chests</c>."}},
 		{"achievement", {"Achievements", "Total amount of earned <cy>Achievements</c>."}},
 		{"quest", {"Quests", "Total amount of completed <cg>Quests</c>."}}
 	};
@@ -763,6 +861,16 @@ public:
 		18, // Robot Anim 1
 		19, // Robot Anim 2
 		20 // Spider Anim
+	};
+
+	std::vector<GJRewardType> m_treasureTypes {
+		GJRewardType::SmallTreasure,
+		GJRewardType::LargeTreasure,
+		GJRewardType::Key10Treasure,
+		GJRewardType::Key25Treasure,
+		GJRewardType::Key50Treasure,
+		GJRewardType::Key100Treasure,
+		GJRewardType::Gold
 	};
 
 	std::vector<std::string> m_pinnedStats {};
@@ -822,7 +930,7 @@ protected:
 			menu_selector(StatsPage::onMainInfo)
 		);
 		infoButton->setID("info-button");
-		infoButton->setPosition({25.f, 25.f});
+		infoButton->setPosition({20.f, 20.f});
 		buttonMenu->addChild(infoButton);
 
 		// Nav Dot Menu
@@ -855,7 +963,7 @@ protected:
 					->setGrowCrossAxis(true)
 					->setCrossAxisOverflow(false)
 			);
-			pageMenu->setPosition({200.f, 117.f});
+			pageMenu->setPosition({200.f, 115.f});
 			pageMenu->setContentSize({380.f, 160.f});
 			pageMenu->setVisible(false);
 			m_mainLayer->addChild(pageMenu);

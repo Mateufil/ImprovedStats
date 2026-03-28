@@ -1,3 +1,16 @@
+# <cf>v1.3.0</c>
+- <cg>Added Daily Chests stat with extra stats:</c>
+	- 4 Hour Chests, 24 Hour Chests
+- <cg>Added Treasure Chests stat with extra stats:</c>
+	- 1 Key, 5 Key, 10 Key, 25 Key, 50 Key, 100 Key, Gold
+- <cg>Added Reward Chests stat with extra stats:</c>
+	- Weekly, Event, Gauntlet, Path
+- <cg>Added Vault Chests stat</c>
+- <cg>Added Other Chests stat with extra stats:</c>
+	- Special Chests, Social Chests, Ad Chests
+- <cs>Increased the width of the stat info menu</c>
+- <cs>Updated the mod's credits</c>
+
 # <cj>v1.2.0</c>
 - <cg>Added ability to pin stats</c>
 	- For more info check the mod's description
@@ -7,7 +20,7 @@
 - <cs>Turned stats into buttons that show more info</c>
 - <cs>Made Stat Info Buttons setting off by default</c>
 - <cs>Renamed Liked/Disliked Levels stat to Liked Levels</c>
-- <cs>Made the mod's changelod entries colored</c>
+- <cs>Made the mod's changelog entries colored</c>
 
 # <cl>v1.1.1</c>
 - <cg>Added extra stats to Event Levels:</c>
