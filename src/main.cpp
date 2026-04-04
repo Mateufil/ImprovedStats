@@ -196,7 +196,7 @@ public:
 						case 6: harder6Levels++; break;
 						case 7: harder7Levels++; break;
 						case 8: insane8Levels++; break;
-						case 9: insane8Levels++; break;
+						case 9: insane9Levels++; break;
 						case 10: demonLevels++; break;
 						default: unratedLevels++; break;
 					}
@@ -213,7 +213,7 @@ public:
 						case 6: harder6Levels++; break;
 						case 7: harder7Levels++; break;
 						case 8: insane8Levels++; break;
-						case 9: insane8Levels++; break;
+						case 9: insane9Levels++; break;
 						case 10: demonLevels++; break;
 					}
 				}
@@ -229,7 +229,7 @@ public:
 						case 6: harder6Levels++; break;
 						case 7: harder7Levels++; break;
 						case 8: insane8Levels++; break;
-						case 9: insane8Levels++; break;
+						case 9: insane9Levels++; break;
 						case 10: demonLevels++; break;
 					}
 				}
@@ -269,7 +269,7 @@ public:
 						case 6: harder6Levels++; break;
 						case 7: harder7Levels++; break;
 						case 8: insane8Levels++; break;
-						case 9: insane8Levels++; break;
+						case 9: insane9Levels++; break;
 						case 10: demonLevels++; break;
 					}
 				}
@@ -306,7 +306,7 @@ public:
 						case 6: harder6Levels++; break;
 						case 7: harder7Levels++; break;
 						case 8: insane8Levels++; break;
-						case 9: insane8Levels++; break;
+						case 9: insane9Levels++; break;
 						case 10: demonLevels++; break;
 					}
 				}
@@ -1238,7 +1238,6 @@ class $modify(MenuLayer) {
 	bool init() {
 		if (!MenuLayer::init()) return false;
 
-		
 		auto accountId = GJAccountManager::sharedState()->m_accountID;
 		if (accountId > 0) {
 			if (!GameLevelManager::sharedState()->userInfoForAccountID(accountId)) {

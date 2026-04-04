@@ -1,3 +1,6 @@
+# <cj>v1.4.1</c>
+- <cs>Fixed 9 star completions showing as 8 star in some extra stats</c>
+
 # <cl>v1.4.0</c>
 - <cg>Added Collected Keys stat with extra stats:</c>
 	- Demon Keys, Gold Keys
