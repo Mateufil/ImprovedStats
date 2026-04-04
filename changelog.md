@@ -1,3 +1,19 @@
+# <cl>v1.4.0</c>
+- <cg>Added Collected Keys stat with extra stats:</c>
+	- Demon Keys, Gold Keys
+- <cg>Added Creator Points stat</c>
+- <cg>Added extra stats to User Levels:</c>
+	- Unrated, Auto (1*), Easy (2*), Normal (3*), Hard (4*), Hard (5*)
+	- Harder (6*), Harder (7*), Insane (8*), Insane (9*), Demon (10*)
+- <cg>Added extra stats to Daily Levels:</c>
+	- Auto (1*), Easy (2*), Normal (3*), Hard (4*), Hard (5*)
+	- Harder (6*), Harder (7*), Insane (8*), Insane (9*), Demon (10*)
+- <cg>Added extra stats to Weekly Demons:</c>
+	- Easy, Medium, Hard, Insane, Extreme
+- <cg>Added extra stats to Gauntlets:</c>
+	- Auto (1*), Easy (2*), Normal (3*), Hard (4*), Hard (5*)
+	- Harder (6*), Harder (7*), Insane (8*), Insane (9*), Demon (10*)
+
 # <cf>v1.3.0</c>
 - <cg>Added Daily Chests stat with extra stats:</c>
 	- 4 Hour Chests, 24 Hour Chests

@@ -6,7 +6,7 @@ It adds new stats such as collected icons, completed weekly demons, total comple
 <cc>More stats may be added with updates!</c>
 
 ## <cy>Stats</c>
-List of stats, new stats are marked with <cj>blue</c>.
+List of stats, new stats are marked with <cy>yellow</c>.
 
 To access some extra stats you need to press the stat with a <cg>+ symbol</c> next to them!
 
@@ -14,63 +14,72 @@ To access some extra stats you need to press the stat with a <cg>+ symbol</c> ne
 - Jumps
 - Attempts
 - Official Levels
-	- <cj>Main, Tower, Meltdown, World, SubZero, Other</c>
+	- <cy>Main, Tower, Meltdown, World, SubZero, Other</c>
 - User Levels
+	- <cy>Unrated, Auto (1*), Easy (2*), Normal (3*), Hard (4*), Hard (5*)</c>
+	- <cy>Harder (6*), Harder (7*), Insane (8*), Insane (9*), Demon (10*)</c>
 - Insane Levels
 - Demon Levels
 
 ### Collectibles
 - Stars
-- <cj>Moons</c>
+- <cy>Moons</c>
 - Secret Coins
 - User Coins
-	- <cj>Unverified Coins</c>
+	- <cy>Unverified Coins</c>
 - Collected Diamonds
-	- <cj>Diamond Shards</c>
+	- <cy>Diamond Shards</c>
 - Collected Orbs
-	- <cj>Current Orbs</c>
+	- <cy>Current Orbs</c>
 
 ### Completions
 - Daily Levels
-- <cj>Weekly Demons</c>
-- <cj>Event Levels</c>
-	- <cj>Auto (1*), Easy (2*), Normal (3*), Hard (4*), Hard (5*)</c>
-	- <cj>Harder (6*), Harder (7*), Insane (8*), Insane (9*), Demon (10*)</c>
+	- <cy>Auto (1*), Easy (2*), Normal (3*), Hard (4*), Hard (5*)</c>
+	- <cy>Harder (6*), Harder (7*), Insane (8*), Insane (9*), Demon (10*)</c>
+- <cy>Weekly Demons</c>
+	- <cy>Easy, Medium, Hard, Insane, Extreme</c>
+- <cy>Event Levels</c>
+	- <cy>Auto (1*), Easy (2*), Normal (3*), Hard (4*), Hard (5*)</c>
+	- <cy>Harder (6*), Harder (7*), Insane (8*), Insane (9*), Demon (10*)</c>
 - Map Packs
 - Gauntlets
-	- <cj>Completed Levels, Completed Demons</c>
+	- <cy>Levels, Auto (1*), Easy (2*), Normal (3*), Hard (4*), Hard (5*)</c>
+	- <cy>Harder (6*), Harder (7*), Insane (8*), Insane (9*), Demon (10*)</c>
 - List Rewards
 
 ### Icons
-- <cj>Icons</c>
-	- <cj>Cubes, Ships, Balls, UFOs, Waves</c>
-	- <cj>Robots, Spiders, Swings, Jetpacks</c>
-- <cj>Colors</c>
-	- <cj>Main Colors, Secondary Colors</c>
-- <cj>Special Items</c>
-	- <cj>Trails, Ship Fires, Animations, Death Effects</c>
-- <cj>Bought Items</c>
-	- <cj>Normal, Secret, Community, Mechanic, Diamond, Paths</c>
+- <cy>Icons</c>
+	- <cy>Cubes, Ships, Balls, UFOs, Waves</c>
+	- <cy>Robots, Spiders, Swings, Jetpacks</c>
+- <cy>Colors</c>
+	- <cy>Main Colors, Secondary Colors</c>
+- <cy>Special Items</c>
+	- <cy>Trails, Ship Fires, Animations, Death Effects</c>
+- <cy>Bought Items</c>
+	- <cy>Normal, Secret, Community, Mechanic, Diamond, Paths</c>
 
 ### Chests
-- <cj>Daily Chests</c>
-	- <cj>4 Hour Chests, 24 Hour Chests</c>
-- <cj>Treasure Chests</c>
-	- <cj>1 Key, 5 Key, 10 Key, 25 Key, 50 Key, 100 Key, Gold</c>
-- <cj>Reward Chests</c>
-	- <cj>Weekly, Event, Gauntlet, Path</c>
-- <cj>Vault Chests</c>
-- <cj>Other Chests</c>
-	- <cj>Special Chests, Social Chests, Ad Chests</c>
+- <cy>Daily Chests</c>
+	- <cy>4 Hour Chests, 24 Hour Chests</c>
+- <cy>Treasure Chests</c>
+	- <cy>1 Key, 5 Key, 10 Key, 25 Key, 50 Key, 100 Key, Gold</c>
+- <cy>Reward Chests</c>
+	- <cy>Weekly, Event, Gauntlet, Path</c>
+- <cy>Vault Chests</c>
+- <cy>Other Chests</c>
+	- <cy>Special Chests, Social Chests, Ad Chests</c>
+- <cy>Collected Keys</c>
+	- <cy>Demon Keys, Gold Keys</c>
 
 ### Other
 - Liked/Disliked Levels
 - Rated Levels
 - Destroyed Players
-- <cj>Achievements</c>
-	- <cj>Main, Meltdown, World, SubZero</c>
-- <cj>Quests</c>
-	- <cj>10 Diamonds, 15 Diamonds, 20 Diamonds</c>
+- <cy>Achievements</c>
+	- <cy>Main, Meltdown, World, SubZero</c>
+- <cy>Quests</c>
+	- <cy>10 Diamonds, 15 Diamonds, 20 Diamonds</c>
+- <cy>Creator Points</c>
 
 ## <co>Pinning Stats</c>
 If you want to keep track of some stats you are interested in, you can <cg>pin them!</c>
@@ -91,7 +100,7 @@ This is my first mod, so some feedback would be nice!
 - [Geometry Dash Documentation](https://wyliemaster.github.io/gddocs/#/) (By WylieMaster) - Helped with GS Values and more!
 
 ## <cp>Previews</c>
-*Some previews may be a little outdated*
+*Some previews may be outdated*
 
 ![Preview 1](mateufil.improved-stats/preview1.png?width=299)
 
