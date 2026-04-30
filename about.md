@@ -13,13 +13,14 @@ To access some extra stats you need to press the stat with a <cg>+ symbol</c> ne
 ### Basic
 - Jumps
 - Attempts
-- Official Levels
-	- <cy>Main, Tower, Meltdown, World, SubZero, Other</c>
-- User Levels
-	- <cy>Unrated, Auto (1*), Easy (2*), Normal (3*), Hard (4*), Hard (5*)</c>
+- <cy>Levels</c>
+	- <cy>Auto (1*), Easy (2*), Normal (3*), Hard (4*), Hard (5*)</c>
 	- <cy>Harder (6*), Harder (7*), Insane (8*), Insane (9*), Demon (10*)</c>
-- Insane Levels
-- Demon Levels
+	- <cy>Official, Unrated</c>
+- <cy>Achievements</c>
+	- <cy>Main, Meltdown, World, SubZero</c>
+- <cy>Quests</c>
+	- <cy>10 Diamonds, 15 Diamonds, 20 Diamonds</c>
 
 ### Collectibles
 - Stars
@@ -31,6 +32,23 @@ To access some extra stats you need to press the stat with a <cg>+ symbol</c> ne
 	- <cy>Diamond Shards</c>
 - Collected Orbs
 	- <cy>Current Orbs</c>
+
+### Levels
+- Official Levels
+	- <cy>Main, Tower, Meltdown, World, SubZero, Other</c>
+- User Levels
+	- <cy>Unrated, Auto (1*), Easy (2*), Normal (3*), Hard (4*), Hard (5*)</c>
+	- <cy>Harder (6*), Harder (7*), Insane (8*), Insane (9*), Demon (10*)</c>
+- <cy>Classic Levels</c>
+	- <cy>Auto (1*), Easy (2*), Normal (3*), Hard (4*), Hard (5*)</c>
+	- <cy>Harder (6*), Harder (7*), Insane (8*), Insane (9*), Demon (10*)</c>
+	- <cy>Official, Unrated</c>
+- <cy>Platformer Levels</c>
+	- <cy>Auto (1*), Easy (2*), Normal (3*), Hard (4*), Hard (5*)</c>
+	- <cy>Harder (6*), Harder (7*), Insane (8*), Insane (9*), Demon (10*)</c>
+	- <cy>Official, Unrated</c>
+- Insane Levels
+- Demon Levels
 
 ### Completions
 - Daily Levels
@@ -57,6 +75,12 @@ To access some extra stats you need to press the stat with a <cg>+ symbol</c> ne
 	- <cy>Trails, Ship Fires, Animations, Death Effects</c>
 - <cy>Bought Items</c>
 	- <cy>Normal, Secret, Community, Mechanic, Diamond, Paths</c>
+- <cy>Shards</c>
+	- <cy>Fire, Ice, Poison, Shadow, Lava, Bonus 1</c>
+	- <cy>Earth, Blood, Metal, Light, Soul, Bonus 2</c>
+- <cy>Path Progress</c>
+	- <cy>Fire, Ice, Poison, Shadow, Lava</c>
+	- <cy>Earth, Blood, Metal, Light, Soul</c>
 
 ### Chests
 - <cy>Daily Chests</c>
@@ -75,10 +99,7 @@ To access some extra stats you need to press the stat with a <cg>+ symbol</c> ne
 - Liked/Disliked Levels
 - Rated Levels
 - Destroyed Players
-- <cy>Achievements</c>
-	- <cy>Main, Meltdown, World, SubZero</c>
-- <cy>Quests</c>
-	- <cy>10 Diamonds, 15 Diamonds, 20 Diamonds</c>
+- <cy>Global Rank</c>
 - <cy>Creator Points</c>
 
 ## <co>Pinning Stats</c>
@@ -102,14 +123,20 @@ This is my first mod, so some feedback would be nice!
 ## <cp>Previews</c>
 *Some previews may be outdated*
 
-![Preview 1](mateufil.improved-stats/preview1.png?width=299)
+![Basic Page Preview](mateufil.improved-stats/previewBasic.png?width=299)
 
-![Preview 2](mateufil.improved-stats/preview2.png?width=299)
+![Stat Info Preview](mateufil.improved-stats/previewInfo.png?width=299)
 
-![Preview 3](mateufil.improved-stats/preview3.png?width=299)
+![Pin Stat Preview](mateufil.improved-stats/previewPin.png?width=299)
 
-![Preview 4](mateufil.improved-stats/preview4.png?width=299)
+![Collectibles Page Preview](mateufil.improved-stats/previewCollectibles.png?width=299)
 
-![Preview 5](mateufil.improved-stats/preview5.png?width=299)
+![Levels Page Preview](mateufil.improved-stats/previewLevels.png?width=299)
 
-![Preview 6](mateufil.improved-stats/preview6.png?width=299)
+![Completions Page Preview](mateufil.improved-stats/previewCompletions.png?width=299)
+
+![Icons Page Preview](mateufil.improved-stats/previewIcons.png?width=299)
+
+![Chests Page Preview](mateufil.improved-stats/previewChests.png?width=299)
+
+![Other Page Preview](mateufil.improved-stats/previewOther.png?width=299)

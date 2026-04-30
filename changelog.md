@@ -1,3 +1,27 @@
+# <cf>v1.5.0</c>
+- <cg>Added Levels stat with extra stats:</c>
+	- Auto (1*), Easy (2*), Normal (3*), Hard (4*), Hard (5*)
+	- Harder (6*), Harder (7*), Insane (8*), Insane (9*), Demon (10*)
+	- Official, Unrated
+- <cg>Added Classic Levels stat with extra stats:</c>
+	- Auto (1*), Easy (2*), Normal (3*), Hard (4*), Hard (5*)
+	- Harder (6*), Harder (7*), Insane (8*), Insane (9*), Demon (10*)
+	- Official, Unrated
+- <cg>Added Platformer Levels stat with extra stats:</c>
+	- Auto (1*), Easy (2*), Normal (3*), Hard (4*), Hard (5*)
+	- Harder (6*), Harder (7*), Insane (8*), Insane (9*), Demon (10*)
+	- Official, Unrated
+- <cg>Added Shards stat with extra stats:</c>
+	- Fire, Ice, Poison, Shadow, Lava, Bonus 1
+	- Earth, Blood, Metal, Light, Soul, Bonus 2
+- <cg>Added Path Progress stat with extra stats:</c>
+	- Fire, Ice, Poison, Shadow, Lava
+	- Earth, Blood, Metal, Light, Soul
+- <cg>Added Global Rank stat</c>
+- <cs>Moved Official Levels, User Levels, Insane Levels & Demon Levels stat to Levels page</c>
+- <cs>Moved Achievements & Quests stat to Basic page</c>
+- <cs>Updated the mod's previews</c>
+
 # <cj>v1.4.1</c>
 - <cs>Fixed 9 star completions showing as 8 star in some extra stats</c>
 

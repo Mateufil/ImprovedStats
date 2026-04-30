@@ -8,7 +8,7 @@
 	},
 	"id": "mateufil.improved-stats",
 	"name": "Improved Stats",
-	"version": "v1.4.1",
+	"version": "v1.5.0",
 	"developer": "Mateufil",
 	"description": "Improves the Stats Menu!",
 	"dependencies": {
@@ -19,6 +19,12 @@
 			"type": "bool",
 			"name": "Stat Info Buttons",
 			"description": "Controls whether info buttons for stats are shown or not.",
+			"default": false
+		},
+		"debug": {
+			"type": "bool",
+			"name": "Debug",
+			"description": "Shows an extra debug button in the Stats Menu used for checking some stuff.\n\n**You should keep this disabled unless you have any other reason not to.**",
 			"default": false
 		}
 	},
