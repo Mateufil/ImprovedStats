@@ -1000,7 +1000,7 @@ public:
 	}
 
 	void onDebug(CCObject* sender) {
-		gd::string debugMessage = "";
+		std::string debugMessage = "";
 
 		// Main Levels
 		debugMessage.append("# <cy>Main Levels\n");
