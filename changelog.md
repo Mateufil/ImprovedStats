@@ -18,6 +18,7 @@
 	- Fire, Ice, Poison, Shadow, Lava
 	- Earth, Blood, Metal, Light, Soul
 - <cg>Added Global Rank stat</c>
+- <cg>Added Debug setting</c>
 - <cs>Moved Official Levels, User Levels, Insane Levels & Demon Levels stat to Levels page</c>
 - <cs>Moved Achievements & Quests stat to Basic page</c>
 - <cs>Updated the mod's previews</c>
