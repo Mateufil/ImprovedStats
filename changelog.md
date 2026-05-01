@@ -1,3 +1,11 @@
+# <cl>v1.5.1</c>
+- <cg>Added extra stats to Secret Coins:</c>
+	- Main Coins, Tower Coins, Map Pack Coins, Other Coins
+- <cg>Added extra stats to Map Packs:</c>
+	- Levels, Auto (1*), Easy (2*), Normal (3*), Hard (4*), Hard (5*)
+	- Harder (6*), Harder (7*), Insane (8*), Insane (9*), Demon (10*)
+- <cs>Fixed Explorers sometimes counting towards Official Levels extra stats</c>
+
 # <cf>v1.5.0</c>
 - <cg>Added Levels stat with extra stats:</c>
 	- Auto (1*), Easy (2*), Normal (3*), Hard (4*), Hard (5*)

@@ -26,6 +26,7 @@ To access some extra stats you need to press the stat with a <cg>+ symbol</c> ne
 - Stars
 - <cy>Moons</c>
 - Secret Coins
+	- <cy>Main Coins, Tower Coins, Map Pack Coins, Other Coins</c>
 - User Coins
 	- <cy>Unverified Coins</c>
 - Collected Diamonds
@@ -60,6 +61,8 @@ To access some extra stats you need to press the stat with a <cg>+ symbol</c> ne
 	- <cy>Auto (1*), Easy (2*), Normal (3*), Hard (4*), Hard (5*)</c>
 	- <cy>Harder (6*), Harder (7*), Insane (8*), Insane (9*), Demon (10*)</c>
 - Map Packs
+	- <cy>Levels, Auto (1*), Easy (2*), Normal (3*), Hard (4*), Hard (5*)</c>
+	- <cy>Harder (6*), Harder (7*), Insane (8*), Insane (9*), Demon (10*)</c>
 - Gauntlets
 	- <cy>Levels, Auto (1*), Easy (2*), Normal (3*), Hard (4*), Hard (5*)</c>
 	- <cy>Harder (6*), Harder (7*), Insane (8*), Insane (9*), Demon (10*)</c>
