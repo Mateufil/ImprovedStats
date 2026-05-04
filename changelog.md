@@ -1,3 +1,12 @@
+# <cj>v1.5.2</c>
+- <cg>Made some stats display as gold if you have the maximum amount of it</c>
+- <cg>Added extra stats to Insane Levels:</c>
+	- Official Insanes, 8 Star Insanes, 9 Star Insanes
+- <cg>Added extra stats to Demon Levels:</c>
+	- Easy, Medium, Hard, Insane, Extreme, Official
+- <cs>Fixed Official Levels maximum amount sometimes showing incorrectly</c>
+- <cs>Updated to Geode 5.7.1</c>
+
 # <cl>v1.5.1</c>
 - <cg>Added extra stats to Secret Coins:</c>
 	- Main Coins, Tower Coins, Map Pack Coins, Other Coins

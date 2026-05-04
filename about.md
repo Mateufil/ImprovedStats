@@ -49,7 +49,9 @@ To access some extra stats you need to press the stat with a <cg>+ symbol</c> ne
 	- <cy>Harder (6*), Harder (7*), Insane (8*), Insane (9*), Demon (10*)</c>
 	- <cy>Official, Unrated</c>
 - Insane Levels
+	- <cy>Official Insanes, 8 Star Insanes, 9 Star Insanes</c>
 - Demon Levels
+	- <cy>Easy, Medium, Hard, Insane, Extreme, Official</c>
 
 ### Completions
 - Daily Levels

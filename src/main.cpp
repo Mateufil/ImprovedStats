@@ -4,6 +4,7 @@
 using namespace geode::prelude;
 
 // This is my first Geode mod and also my first time using C++, so the code is probably bad
+// I will clean up the code in v2.0.0 I promise
 
 struct Stat {
 	std::string stat;
@@ -12,6 +13,7 @@ struct Stat {
 	std::string icon;
 	float iconScale;
 	bool more;
+	int max;
 };
 
 class StatsPage : public Popup {
@@ -129,6 +131,7 @@ public:
 			auto subzeroCount = 0;
 			auto otherLevels = 0;
 			auto otherCount = 0;
+			auto reduceCount = 0;
 			for (auto [key, data] : CCDictionaryExt<std::string_view, CCString>(GameStatsManager::sharedState()->m_completedLevels)) {
 				if (key[0] == 'n') {
 					auto id = utils::numFromString<int>(key.substr(2)).unwrapOr(0);
@@ -149,7 +152,9 @@ public:
 			}
 			for (auto [key, data] : CCDictionaryExt<std::string_view>(mainLevelsList)) {
 				auto id = utils::numFromString<int>(key).unwrapOr(0);
-				if (id > 0 and id <= 1000 and id != 23) {
+				if (id == 23) {
+					reduceCount++;
+			 	} else if (id > 0 and id <= 1000 and id != 23) {
 					mainCount++;
 				} else if (id > 1000 and id <= 2000) {
 					meltdownCount++;
@@ -165,7 +170,7 @@ public:
 			}
 			statDesc.append(fmt::format(
 				"\nMaximum amount is <cp>{}</c>.\n\n<cy>Main:</c> {} / {}     <co>Tower:</c> {} / {}\n<cr>Meltdown:</c> {} / {}     <cg>World:</c> {} / {}\n<cj>SubZero:</c> {} / {}     <ca>Other:</c> {} / {}",
-				mainLevelsList->count(),
+				mainLevelsList->count() - reduceCount,
 				mainLevels, mainCount,
 				towerLevels, towerCount,
 				meltdownLevels, meltdownCount,
@@ -242,6 +247,57 @@ public:
 				addCommas(harder7Levels), addCommas(insane8Levels),
 				addCommas(insane9Levels), addCommas(demonLevels),
 				addCommas(unratedLevels)
+			));
+		} else if (m_statInfoId == "5") { // Demon Levels
+			auto easyDemons = 0;
+			auto mediumDemons = 0;
+			auto hardDemons = 0;
+			auto insaneDemons = 0;
+			auto extremeDemons = 0;
+			auto mainDemons = 0;
+			for (auto [key, level] : CCDictionaryExt<std::string_view, GJGameLevel>(GameLevelManager::sharedState()->m_mainLevels)) {
+				if (level->m_normalPercent >= 100 && level->m_difficulty == GJDifficulty::Demon) {
+					mainDemons++;
+				}
+			}
+			for (auto [key, level] : CCDictionaryExt<std::string_view, GJGameLevel>(GameLevelManager::sharedState()->m_onlineLevels)) {
+				if (level->m_normalPercent >= 100 && level->m_stars == 10) {
+					switch (level->m_demonDifficulty) {
+						case 3: easyDemons++; break;
+						case 4: mediumDemons++; break;
+						case 0: hardDemons++; break;
+						case 5: insaneDemons++; break;
+						case 6: extremeDemons++; break;
+					}
+				}
+			}
+			for (auto [key, level] : CCDictionaryExt<std::string_view, GJGameLevel>(GameLevelManager::sharedState()->m_dailyLevels)) {
+				if (level->m_normalPercent >= 100 && level->m_stars == 10) {
+					switch (level->m_demonDifficulty) {
+						case 3: easyDemons++; break;
+						case 4: mediumDemons++; break;
+						case 0: hardDemons++; break;
+						case 5: insaneDemons++; break;
+						case 6: extremeDemons++; break;
+					}
+				}
+			}
+			for (auto [key, level] : CCDictionaryExt<std::string_view, GJGameLevel>(GameLevelManager::sharedState()->m_gauntletLevels)) {
+				if (level->m_normalPercent >= 100 && level->m_stars == 10) {
+					switch (level->m_demonDifficulty) {
+						case 3: easyDemons++; break;
+						case 4: mediumDemons++; break;
+						case 0: hardDemons++; break;
+						case 5: insaneDemons++; break;
+						case 6: extremeDemons++; break;
+					}
+				}
+			}
+			statDesc.append(fmt::format(
+				"\n\n<ca>Easy:</c> {}     <cd>Medium:</c> {}\n<co>Hard:</c> {}     <cr>Insane:</c> {}\n<c>_Extreme:</c> {}     <cy>Official:</c> {}",
+				addCommas(easyDemons), addCommas(mediumDemons),
+				addCommas(hardDemons), addCommas(insaneDemons),
+				addCommas(extremeDemons), addCommas(mainDemons)
 			));
 		} else if (m_statInfoId == "7") { // Map Packs
 			auto completedLevels = 0;
@@ -391,6 +447,40 @@ public:
 				addCommas(harder7Levels), addCommas(insane8Levels),
 				addCommas(insane9Levels), addCommas(demonLevels)
 			));
+		} else if (m_statInfoId == "42") { // Insane Levels
+			auto insane8Levels = 0;
+			auto insane9Levels = 0;
+			auto mainLevels = 0;
+			for (auto [key, level] : CCDictionaryExt<std::string_view, GJGameLevel>(GameLevelManager::sharedState()->m_mainLevels)) {
+				if (level->m_normalPercent >= 100 && level->m_difficulty == GJDifficulty::Insane) {
+					mainLevels++;
+				}
+			}
+			for (auto [key, level] : CCDictionaryExt<std::string_view, GJGameLevel>(GameLevelManager::sharedState()->m_onlineLevels)) {
+				if (level->m_normalPercent >= 100) {
+					switch (level->m_stars) {
+						case 8: insane8Levels++; break;
+						case 9: insane9Levels++; break;
+					}
+				}
+			}
+			for (auto [key, level] : CCDictionaryExt<std::string_view, GJGameLevel>(GameLevelManager::sharedState()->m_dailyLevels)) {
+				if (level->m_normalPercent >= 100) {
+					switch (level->m_stars) {
+						case 8: insane8Levels++; break;
+						case 9: insane9Levels++; break;
+					}
+				}
+			}
+			for (auto [key, level] : CCDictionaryExt<std::string_view, GJGameLevel>(GameLevelManager::sharedState()->m_gauntletLevels)) {
+				if (level->m_normalPercent >= 100) {
+					switch (level->m_stars) {
+						case 8: insane8Levels++; break;
+						case 9: insane9Levels++; break;
+					}
+				}
+			}
+			statDesc.append(fmt::format("\n\n<cd>Official Insanes:</c> {}\n<cp>8 Star Insanes:</c> {}\n<ca>9 Star Insanes:</c> {}", addCommas(mainLevels), addCommas(insane8Levels), addCommas(insane9Levels)));
 		} else if (m_statInfoId == "level") {
 			auto autoLevels = 0;
 			auto easyLevels = 0;
@@ -1325,9 +1415,17 @@ public:
 		} else {
 			value = GameStatsManager::sharedState()->getStat(stat.c_str());
 		}
-		auto valueLabel = CCLabelBMFont::create(addCommas(value).c_str(), "bigFont.fnt");
+		auto valueFont = "bigFont.fnt";
+		auto valueScale = 0.8f;
+		if (statData.max) {
+			if (value >= statData.max) {
+				valueFont = "goldFont.fnt";
+				valueScale = 1.f;
+			}
+		}
+		auto valueLabel = CCLabelBMFont::create(addCommas(value).c_str(), valueFont);
 		valueLabel->setPosition({60.f, 20.f});
-		valueLabel->limitLabelWidth(110.f, 0.8f, 0.f);
+		valueLabel->limitLabelWidth(110.f, valueScale, 0.f);
 		statSprite->addChild(valueLabel);
 
 		// More Sprite
@@ -1396,7 +1494,7 @@ public:
 			{"1", "Jumps", 0.7f, "GJ_orderUpBtn_001.png", 0.55f},
 			{"2", "Attempts", 0.7f, "GJ_updateBtn_001.png", 0.55f},
 			{"level", "Levels", 0.7f, "GJ_playBtn2_001.png", 0.35f, true},
-			{"achievement", "Achievements", 0.7f, "rankIcon_1_001.png", 0.9f, true},
+			{"achievement", "Achievements", 0.7f, "rankIcon_1_001.png", 0.9f, true, 570},
 			{"quest", "Quests", 0.7f, "quests.png"_spr, 0.475f, true}
 		},
 		{
@@ -1404,41 +1502,41 @@ public:
 			{"6", "Stars", 0.7f, "GJ_bigStar_noShadow_001.png", 0.6f},
 			{"28", "Moons", 0.7f, "GJ_bigMoon_noShadow_001.png", 0.6f},
 			{"13", "Collected\nDiamonds", 0.6f, "GJ_bigDiamond_noShadow_001.png", 0.6f, true},
-			{"8", "Secret\nCoins", 0.6f, "secretCoinUI_001.png", 0.6f, true},
+			{"8", "Secret\nCoins", 0.6f, "secretCoinUI_001.png", 0.6f, true, 164},
 			{"12", "User\nCoins", 0.6f, "secretCoinUI2_001.png", 0.6f, true},
 			{"22", "Collected\nOrbs", 0.6f, "currencyOrbIcon_001.png", 1.2f, true}
 		},
 		{
 			{"Levels"},
-			{"3", "Official\nLevels", 0.6f, "GJ_playBtn_001.png", 0.275f, true},
+			{"3", "Official\nLevels", 0.6f, "GJ_playBtn_001.png", 0.275f, true, 43},
 			{"4", "User\nLevels", 0.6f, "GJ_playBtn2_001.png", 0.35f, true},
-			{"42", "Insane\nLevels", 0.6f, "diffIcon_05_btn_001.png", 0.8f},
+			{"42", "Insane\nLevels", 0.6f, "diffIcon_05_btn_001.png", 0.8f, true},
 			{"classic", "Classic\nLevels", 0.6f, "GJ_bigStar_noShadow_001.png", 0.6f, true},
 			{"platformer", "Platformer\nLevels", 0.6f, "GJ_bigMoon_noShadow_001.png", 0.6f, true},
-			{"5", "Demon\nLevels", 0.6f, "diffIcon_06_btn_001.png", 0.8f}
+			{"5", "Demon\nLevels", 0.6f, "diffIcon_06_btn_001.png", 0.8f, true}
 		},
 		{
 			{"Completions"},
 			{"15", "Daily\nLevels", 0.6f, "gj_dailyCrown_001.png", 0.425f, true},
 			{"weekly", "Weekly\nDemons", 0.6f, "gj_weeklyCrown_001.png", 0.425f, true},
 			{"event", "Event\nLevels", 0.6f, "gj_eventCrown_001.png", 0.425f, true},
-			{"7", "Map\nPacks", 0.6f, "mapPacks.png"_spr, 0.425f, true},
+			{"7", "Map\nPacks", 0.6f, "mapPacks.png"_spr, 0.425f, true, 65},
 			{"40", "Gauntlets", 0.7f, "gauntlets.png"_spr, 0.425f, true},
 			{"41", "List\nRewards", 0.6f, "GJ_listAddBtn_001.png", 0.8f}
 		},
 		{
 			{"Icons"},
-			{"icon", "Icons", 0.7f, "icons.png"_spr, 0.75f, true},
-			{"color", "Colors", 0.7f, "GJ_paintBtn_001.png", 0.75f, true},
-			{"special", "Special\nItems", 0.6f, "player_special_02_001.png", 0.8f, true},
-			{"bought", "Bought\nItems", 0.6f, "storeItemIcon_001.png", 1.2f, true},
-			{"shard", "Shards", 0.7f, "bonusShardSmall_001.png", 1.3f, true},
-			{"path", "Path\nProgress", 0.6f, "paths.png"_spr, 0.45f, true}
+			{"icon", "Icons", 0.7f, "icons.png"_spr, 0.75f, true, 1205},
+			{"color", "Colors", 0.7f, "GJ_paintBtn_001.png", 0.75f, true, 214},
+			{"special", "Special\nItems", 0.6f, "player_special_02_001.png", 0.8f, true, 36},
+			{"bought", "Bought\nItems", 0.6f, "storeItemIcon_001.png", 1.2f, true, 283},
+			{"shard", "Shards", 0.7f, "bonusShardSmall_001.png", 1.3f, true, 1200},
+			{"path", "Path\nProgress", 0.6f, "paths.png"_spr, 0.45f, true, 10000}
 		},
 		{
 			{"Chests"},
 			{"daily", "Daily\nChests", 0.6f, "GJ_dailyRewardBtn_001.png", 0.65f, true},
-			{"treasure", "Treasure\nChests", 0.6f, "chest_04_02_001.png", 0.25f, true},
+			{"treasure", "Treasure\nChests", 0.6f, "chest_04_02_001.png", 0.25f, true, 624},
 			{"reward", "Reward\nChests", 0.6f, "chest_06_02_001.png", 0.25f, true},
 			{"vault", "Vault\nChests", 0.6f, "chest_09_02_001.png", 0.25f},
 			{"other", "Other\nChests", 0.6f, "chest_01_02_001.png", 0.3f, true},
@@ -1461,7 +1559,7 @@ public:
 		{"4", {"User Levels", "Total amount of completed <cj>User Created Levels</c> in <cp>Normal Mode</c>."}},
 		{"5", {"Demon Levels", "Total amount of completed <cr>Demon Difficulty Levels</c> in <cp>Normal Mode</c>."}},
 		{"6", {"Stars", "Total amount of collected <cy>Stars</c>."}},
-		{"7", {"Map Packs", "Total amount of completed <cg>Map Packs</c>."}},
+		{"7", {"Map Packs", "Total amount of completed <cg>Map Packs</c>.\nMaximum amount is <cp>65</c>."}},
 		{"8", {"Secret Coins", "Total amount of collected <co>Secret Coins</c>.\nMaximum amount is <cp>164</c>."}},
 		{"9", {"Destroyed Players", "Total amount of <co>Destroyed Players</c> on the <cl>Main Menu</c>."}},
 		{"10", {"Liked Levels", "Total amount of <cp>Liked or Disliked</c> <cj>Online Levels</c>."}},
@@ -1705,6 +1803,15 @@ protected:
 		} else {
 			goToPage(0);
 		}
+
+		if (GameLevelManager::sharedState()->m_savedPacks->count() < 65) {
+			auto packSearch = GJSearchObject::create(SearchType::MapPack);
+			for (int i = 0; i < 7; i++) {
+				log::info("Getting map packs page {}", i);
+				packSearch->m_page = i;
+				GameLevelManager::sharedState()->getMapPacks(packSearch);
+			}
+		}
 		
 		return true;
 	}
@@ -1719,15 +1826,6 @@ class $modify(MenuLayer) {
 			if (!GameLevelManager::sharedState()->userInfoForAccountID(accountId)) {
 				log::info("Getting user info");
 				GameLevelManager::sharedState()->getGJUserInfo(accountId);
-			}
-		}
-
-		if (GameLevelManager::sharedState()->m_savedPacks->count() < 65) {
-			auto packSearch = GJSearchObject::create(SearchType::MapPack);
-			for (int i = 0; i < 7; i++) {
-				log::info("Getting map packs page {}", i);
-				packSearch->m_page = i;
-				GameLevelManager::sharedState()->getMapPacks(packSearch);
 			}
 		}
 
