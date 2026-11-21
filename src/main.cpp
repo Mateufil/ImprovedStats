@@ -116,9 +116,55 @@ public:
 		m_statInfoId = stat->getID();
 		auto statInfo = m_statInfo[m_statInfoId];
 		auto statDesc = statInfo[1];
-
-		if (m_statInfoId == "3") { // Official Levels
-			auto mainLevelsList = GameLevelManager::sharedState()->m_mainLevels;
+		if (m_statInfoId == "2") { // Attempts
+			std::vector<std::string> deathsStrings = {};
+			auto deathsStats = std::vector(10, 0);
+			auto totalPercent = 0;
+			auto totalDeaths = 0;
+			auto average = 0;
+			for (auto [key, level] : CCDictionaryExt<std::string_view, GJGameLevel>(GameLevelManager::sharedState()->m_mainLevels)) {
+				if (level->m_deathsPerPercent != "") {
+					deathsStrings.push_back(level->m_deathsPerPercent);
+				}
+			}
+			for (auto [key, level] : CCDictionaryExt<std::string_view, GJGameLevel>(GameLevelManager::sharedState()->m_onlineLevels)) {
+				if (level->m_deathsPerPercent != "") {
+					deathsStrings.push_back(level->m_deathsPerPercent);
+				}
+			}
+			for (auto [key, level] : CCDictionaryExt<std::string_view, GJGameLevel>(GameLevelManager::sharedState()->m_dailyLevels)) {
+				if (level->m_deathsPerPercent != "") {
+					deathsStrings.push_back(level->m_deathsPerPercent);
+				}
+			}
+			for (auto [key, level] : CCDictionaryExt<std::string_view, GJGameLevel>(GameLevelManager::sharedState()->m_gauntletLevels)) {
+				if (level->m_deathsPerPercent != "") {
+					deathsStrings.push_back(level->m_deathsPerPercent);
+				}
+			}
+			for (int i = 0; i < deathsStrings.size(); i++) {
+				auto percentDeaths = string::splitView(deathsStrings[i], ",");
+				for (int j = 0; j < percentDeaths.size() / 2; j++) {
+					auto percent = numFromString<int>(percentDeaths[j*2]).unwrapOr(-1);
+					auto deaths = numFromString<int>(percentDeaths[j*2+1]).unwrapOr(0);
+					deathsStats[percent/10] += deaths;
+					totalPercent += percent * deaths;
+					totalDeaths += deaths;
+				}
+			}
+			if (totalDeaths > 0) {
+				average = totalPercent / totalDeaths;
+			}
+			statDesc.append(fmt::format(
+				"\n\n<c_>Deaths:</c>\n<cc>0-9%:</c> {}     <cc>10-19%:</c> {}\n<cy>20-29%:</c> {}     <cy>30-39%:</c> {}\n<cs>40-49%:</c> {}     <cs>50-59%:</c> {}\n<co>60-69%:</c> {}     <co>70-79%:</c> {}\n<cr>80-89%:</c> {}     <cr>90-99%:</c> {}\n<cp>Average:</c> {}%",
+				addCommas(deathsStats[0]), addCommas(deathsStats[1]),
+				addCommas(deathsStats[2]), addCommas(deathsStats[3]),
+				addCommas(deathsStats[4]), addCommas(deathsStats[5]),
+				addCommas(deathsStats[6]), addCommas(deathsStats[7]),
+				addCommas(deathsStats[8]), addCommas(deathsStats[9]),
+				average
+			));
+		} else if (m_statInfoId == "3") { // Official Levels
 			auto mainLevels = 0;
 			auto mainCount = 0;
 			auto towerLevels = 0;
@@ -150,11 +196,9 @@ public:
 					}
 				}
 			}
-			for (auto [key, data] : CCDictionaryExt<std::string_view>(mainLevelsList)) {
-				auto id = utils::numFromString<int>(key).unwrapOr(0);
-				if (id == 23) {
-					reduceCount++;
-			 	} else if (id > 0 and id <= 1000 and id != 23) {
+			for (int i = 0; i < m_mainLevels.size(); i++) {
+				auto id = m_mainLevels[i];
+			 	if (id > 0 and id <= 1000) {
 					mainCount++;
 				} else if (id > 1000 and id <= 2000) {
 					meltdownCount++;
@@ -170,7 +214,7 @@ public:
 			}
 			statDesc.append(fmt::format(
 				"\nMaximum amount is <cp>{}</c>.\n\n<cy>Main:</c> {} / {}     <co>Tower:</c> {} / {}\n<cr>Meltdown:</c> {} / {}     <cg>World:</c> {} / {}\n<cj>SubZero:</c> {} / {}     <ca>Other:</c> {} / {}",
-				mainLevelsList->count() - reduceCount,
+				m_mainLevels.size(),
 				mainLevels, mainCount,
 				towerLevels, towerCount,
 				meltdownLevels, meltdownCount,
@@ -240,7 +284,7 @@ public:
 				}
 			}
 			statDesc.append(fmt::format(
-				"\n\n<cc>Auto (1*):</c> {}     <cj>Easy (2*):</c> {}\n<cg>Normal (3*):</c> {}     <cy>Hard (4*):</c> {}\n<cs>Hard (5*):</c> {}     <co>Harder (6*):</c> {}\n<cr>Harder (7*):</c> {}     <cp>Insane (8*):</c> {}\n<ca>Insane (9*):</c> {}     <c>_Demon (10*):</c> {}\n<cl>Unrated:</c> {}",
+				"\n\n<cc>Auto (1*):</c> {}     <cj>Easy (2*):</c> {}\n<cg>Normal (3*):</c> {}     <cy>Hard (4*):</c> {}\n<cs>Hard (5*):</c> {}     <co>Harder (6*):</c> {}\n<cr>Harder (7*):</c> {}     <cp>Insane (8*):</c> {}\n<ca>Insane (9*):</c> {}     <c_>Demon (10*):</c> {}\n<cl>Unrated:</c> {}",
 				addCommas(autoLevels), addCommas(easyLevels),
 				addCommas(normalLevels), addCommas(hard4Levels),
 				addCommas(hard5Levels), addCommas(harder6Levels),
@@ -294,7 +338,7 @@ public:
 				}
 			}
 			statDesc.append(fmt::format(
-				"\n\n<ca>Easy:</c> {}     <cd>Medium:</c> {}\n<co>Hard:</c> {}     <cr>Insane:</c> {}\n<c>_Extreme:</c> {}     <cy>Official:</c> {}",
+				"\n\n<ca>Easy:</c> {}     <cd>Medium:</c> {}\n<co>Hard:</c> {}     <cr>Insane:</c> {}\n<c_>Extreme:</c> {}     <cy>Official:</c> {}",
 				addCommas(easyDemons), addCommas(mediumDemons),
 				addCommas(hardDemons), addCommas(insaneDemons),
 				addCommas(extremeDemons), addCommas(mainDemons)
@@ -334,7 +378,7 @@ public:
 				}
 			}
 			statDesc.append(fmt::format(
-				"\n\n<cf>Completed Levels:</c> {}\n<cc>Auto (1*):</c> {}     <cj>Easy (2*):</c> {}\n<cg>Normal (3*):</c> {}     <cy>Hard (4*):</c> {}\n<cs>Hard (5*):</c> {}     <co>Harder (6*):</c> {}\n<cr>Harder (7*):</c> {}     <cp>Insane (8*):</c> {}\n<ca>Insane (9*):</c> {}     <c>_Demon (10*):</c> {}",
+				"\n\n<cf>Completed Levels:</c> {} / 195\n<cc>Auto (1*):</c> {}     <cj>Easy (2*):</c> {}\n<cg>Normal (3*):</c> {}     <cy>Hard (4*):</c> {}\n<cs>Hard (5*):</c> {}     <co>Harder (6*):</c> {}\n<cr>Harder (7*):</c> {}     <cp>Insane (8*):</c> {}\n<ca>Insane (9*):</c> {}     <c_>Demon (10*):</c> {}",
 				addCommas(completedLevels),
 				addCommas(autoLevels), addCommas(easyLevels),
 				addCommas(normalLevels), addCommas(hard4Levels),
@@ -385,29 +429,36 @@ public:
 			auto insane8Levels = 0;
 			auto insane9Levels = 0;
 			auto demonLevels = 0;
+			auto recalledLevels = 0;
 			for (auto [key, level] : CCDictionaryExt<std::string_view, GJGameLevel>(GameLevelManager::sharedState()->m_dailyLevels)) {
-				if (level->m_dailyID <= 100000 && level->m_normalPercent >= 100) {
-					switch (level->m_stars) {
-						case 1: autoLevels++; break;
-						case 2: easyLevels++; break;
-						case 3: normalLevels++; break;
-						case 4: hard4Levels++; break;
-						case 5: hard5Levels++; break;
-						case 6: harder6Levels++; break;
-						case 7: harder7Levels++; break;
-						case 8: insane8Levels++; break;
-						case 9: insane9Levels++; break;
-						case 10: demonLevels++; break;
+				if (level->m_dailyID <= 100000) {
+					if (level->m_normalPercent >= 100) {
+						switch (level->m_stars) {
+							case 1: autoLevels++; break;
+							case 2: easyLevels++; break;
+							case 3: normalLevels++; break;
+							case 4: hard4Levels++; break;
+							case 5: hard5Levels++; break;
+							case 6: harder6Levels++; break;
+							case 7: harder7Levels++; break;
+							case 8: insane8Levels++; break;
+							case 9: insane9Levels++; break;
+							case 10: demonLevels++; break;
+						}
+					}
+					if (GameStatsManager::sharedState()->isDailyRecall(level->m_dailyID)) {
+						recalledLevels++;
 					}
 				}
 			}
 			statDesc.append(fmt::format(
-				"\n\n<cc>Auto (1*):</c> {}     <cj>Easy (2*):</c> {}\n<cg>Normal (3*):</c> {}     <cy>Hard (4*):</c> {}\n<cs>Hard (5*):</c> {}     <co>Harder (6*):</c> {}\n<cr>Harder (7*):</c> {}     <cp>Insane (8*):</c> {}\n<ca>Insane (9*):</c> {}     <c>_Demon (10*):</c> {}",
+				"\n\n<cc>Auto (1*):</c> {}     <cj>Easy (2*):</c> {}\n<cg>Normal (3*):</c> {}     <cy>Hard (4*):</c> {}\n<cs>Hard (5*):</c> {}     <co>Harder (6*):</c> {}\n<cr>Harder (7*):</c> {}     <cp>Insane (8*):</c> {}\n<ca>Insane (9*):</c> {}     <c_>Demon (10*):</c> {}\n<ct>Recalled:</c> {}",
 				addCommas(autoLevels), addCommas(easyLevels),
 				addCommas(normalLevels), addCommas(hard4Levels),
 				addCommas(hard5Levels), addCommas(harder6Levels),
 				addCommas(harder7Levels), addCommas(insane8Levels),
-				addCommas(insane9Levels), addCommas(demonLevels)
+				addCommas(insane9Levels), addCommas(demonLevels),
+				addCommas(recalledLevels)
 			));
 		} else if (m_statInfoId == "22") { // Orbs
 			statDesc.append(fmt::format("\n\n<cl>Current Orbs:</c> {}", addCommas(GameStatsManager::sharedState()->getStat("14"))));
@@ -421,7 +472,6 @@ public:
 			auto harder7Levels = 0;
 			auto insane8Levels = 0;
 			auto insane9Levels = 0;
-			auto demonLevels = 0;
 			for (auto [key, level] : CCDictionaryExt<std::string_view, GJGameLevel>(GameLevelManager::sharedState()->m_gauntletLevels)) {
 				if (level->m_normalPercent >= 100) {
 					switch (level->m_stars) {
@@ -434,18 +484,18 @@ public:
 						case 7: harder7Levels++; break;
 						case 8: insane8Levels++; break;
 						case 9: insane9Levels++; break;
-						case 10: demonLevels++; break;
 					}
 				}
 			}
 			statDesc.append(fmt::format(
-				"\n\n<cf>Completed Levels:</c> {}\n<cc>Auto (1*):</c> {}     <cj>Easy (2*):</c> {}\n<cg>Normal (3*):</c> {}     <cy>Hard (4*):</c> {}\n<cs>Hard (5*):</c> {}     <co>Harder (6*):</c> {}\n<cr>Harder (7*):</c> {}     <cp>Insane (8*):</c> {}\n<ca>Insane (9*):</c> {}     <c>_Demon (10*):</c> {}",
-				addCommas(GameLevelManager::sharedState()->getCompletedGauntletLevels()),
+				"\nMaximum amount is <cp>{}</c>.\n\n<cf>Completed Levels:</c> {} / {}\n<cc>Auto (1*):</c> {}     <cj>Easy (2*):</c> {}\n<cg>Normal (3*):</c> {}     <cy>Hard (4*):</c> {}\n<cs>Hard (5*):</c> {}     <co>Harder (6*):</c> {}\n<cr>Harder (7*):</c> {}     <cp>Insane (8*):</c> {}\n<ca>Insane (9*):</c> {}     <c_>Demon (10*):</c> {}",
+				addCommas(m_gauntletCount),
+				addCommas(GameLevelManager::sharedState()->getCompletedGauntletLevels()), addCommas(m_gauntletCount * 5),
 				addCommas(autoLevels), addCommas(easyLevels),
 				addCommas(normalLevels), addCommas(hard4Levels),
 				addCommas(hard5Levels), addCommas(harder6Levels),
 				addCommas(harder7Levels), addCommas(insane8Levels),
-				addCommas(insane9Levels), addCommas(demonLevels)
+				addCommas(insane9Levels), addCommas(GameLevelManager::sharedState()->getCompletedGauntletDemons())
 			));
 		} else if (m_statInfoId == "42") { // Insane Levels
 			auto insane8Levels = 0;
@@ -549,7 +599,7 @@ public:
 				}
 			}
 			statDesc.append(fmt::format(
-				"\n\n<cc>Auto (1*):</c> {}     <cj>Easy (2*):</c> {}\n<cg>Normal (3*):</c> {}     <cy>Hard (4*):</c> {}\n<cs>Hard (5*):</c> {}     <co>Harder (6*):</c> {}\n<cr>Harder (7*):</c> {}     <cp>Insane (8*):</c> {}\n<ca>Insane (9*):</c> {}     <c>_Demon (10*):</c> {}\n<cd>Official:</c> {}     <cl>Unrated:</c> {}",
+				"\n\n<cc>Auto (1*):</c> {}     <cj>Easy (2*):</c> {}\n<cg>Normal (3*):</c> {}     <cy>Hard (4*):</c> {}\n<cs>Hard (5*):</c> {}     <co>Harder (6*):</c> {}\n<cr>Harder (7*):</c> {}     <cp>Insane (8*):</c> {}\n<ca>Insane (9*):</c> {}     <c_>Demon (10*):</c> {}\n<cd>Official:</c> {}     <cl>Unrated:</c> {}",
 				addCommas(autoLevels), addCommas(easyLevels),
 				addCommas(normalLevels), addCommas(hard4Levels),
 				addCommas(hard5Levels), addCommas(harder6Levels),
@@ -625,7 +675,7 @@ public:
 				}
 			}
 			statDesc.append(fmt::format(
-				"\n\n<cc>Auto (1*):</c> {}     <cj>Easy (2*):</c> {}\n<cg>Normal (3*):</c> {}     <cy>Hard (4*):</c> {}\n<cs>Hard (5*):</c> {}     <co>Harder (6*):</c> {}\n<cr>Harder (7*):</c> {}     <cp>Insane (8*):</c> {}\n<ca>Insane (9*):</c> {}     <c>_Demon (10*):</c> {}\n<cd>Official:</c> {}     <cl>Unrated:</c> {}",
+				"\n\n<cc>Auto (1*):</c> {}     <cj>Easy (2*):</c> {}\n<cg>Normal (3*):</c> {}     <cy>Hard (4*):</c> {}\n<cs>Hard (5*):</c> {}     <co>Harder (6*):</c> {}\n<cr>Harder (7*):</c> {}     <cp>Insane (8*):</c> {}\n<ca>Insane (9*):</c> {}     <c_>Demon (10*):</c> {}\n<cd>Official:</c> {}     <cl>Unrated:</c> {}",
 				addCommas(autoLevels), addCommas(easyLevels),
 				addCommas(normalLevels), addCommas(hard4Levels),
 				addCommas(hard5Levels), addCommas(harder6Levels),
@@ -646,25 +696,34 @@ public:
 			auto demonLevels = 0;
 			auto mainLevels = 0;
 			auto unratedLevels = 0;
+			auto platformerSaves = 0;
+			auto platformerSavesSize = 0.f;
 			for (auto [key, level] : CCDictionaryExt<std::string_view, GJGameLevel>(GameLevelManager::sharedState()->m_mainLevels)) {
 				if (level->m_normalPercent >= 100 && level->isPlatformer()) {
 					mainLevels++;
 				}
 			}
 			for (auto [key, level] : CCDictionaryExt<std::string_view, GJGameLevel>(GameLevelManager::sharedState()->m_onlineLevels)) {
-				if (level->m_normalPercent >= 100 && level->isPlatformer()) {
-					switch (level->m_stars) {
-						case 1: autoLevels++; break;
-						case 2: easyLevels++; break;
-						case 3: normalLevels++; break;
-						case 4: hard4Levels++; break;
-						case 5: hard5Levels++; break;
-						case 6: harder6Levels++; break;
-						case 7: harder7Levels++; break;
-						case 8: insane8Levels++; break;
-						case 9: insane9Levels++; break;
-						case 10: demonLevels++; break;
-						default: unratedLevels++; break;
+				if (level->isPlatformer()) {
+					if (level->m_normalPercent >= 100) {
+						switch (level->m_stars) {
+							case 1: autoLevels++; break;
+							case 2: easyLevels++; break;
+							case 3: normalLevels++; break;
+							case 4: hard4Levels++; break;
+							case 5: hard5Levels++; break;
+							case 6: harder6Levels++; break;
+							case 7: harder7Levels++; break;
+							case 8: insane8Levels++; break;
+							case 9: insane9Levels++; break;
+							case 10: demonLevels++; break;
+							default: unratedLevels++; break;
+						}
+					}
+					if (level->m_platformerSave != "") {
+						platformerSaves++;
+						platformerSavesSize += level->m_platformerSave.size();
+						platformerSavesSize += level->m_platformerSaveReplay.size();
 					}
 				}
 			}
@@ -701,13 +760,14 @@ public:
 				}
 			}
 			statDesc.append(fmt::format(
-				"\n\n<cc>Auto (1*):</c> {}     <cj>Easy (2*):</c> {}\n<cg>Normal (3*):</c> {}     <cy>Hard (4*):</c> {}\n<cs>Hard (5*):</c> {}     <co>Harder (6*):</c> {}\n<cr>Harder (7*):</c> {}     <cp>Insane (8*):</c> {}\n<ca>Insane (9*):</c> {}     <c>_Demon (10*):</c> {}\n<cd>Official:</c> {}     <cl>Unrated:</c> {}",
+				"\n\n<cc>Auto (1*):</c> {}     <cj>Easy (2*):</c> {}\n<cg>Normal (3*):</c> {}     <cy>Hard (4*):</c> {}\n<cs>Hard (5*):</c> {}     <co>Harder (6*):</c> {}\n<cr>Harder (7*):</c> {}     <cp>Insane (8*):</c> {}\n<ca>Insane (9*):</c> {}     <c_>Demon (10*):</c> {}\n<cd>Official:</c> {}     <cl>Unrated:</c> {}\n<cf>Saves:</c> {} ({:.1f} KB)",
 				addCommas(autoLevels), addCommas(easyLevels),
 				addCommas(normalLevels), addCommas(hard4Levels),
 				addCommas(hard5Levels), addCommas(harder6Levels),
 				addCommas(harder7Levels), addCommas(insane8Levels),
 				addCommas(insane9Levels), addCommas(demonLevels),
-				addCommas(mainLevels), addCommas(unratedLevels)
+				addCommas(mainLevels), addCommas(unratedLevels),
+				addCommas(platformerSaves), platformerSavesSize/1024
 			));
 		} else if (m_statInfoId == "weekly") {
 			auto easyDemons = 0;
@@ -715,26 +775,40 @@ public:
 			auto hardDemons = 0;
 			auto insaneDemons = 0;
 			auto extremeDemons = 0;
+			auto recalledLevels = 0;
 			for (auto [key, level] : CCDictionaryExt<std::string_view, GJGameLevel>(GameLevelManager::sharedState()->m_dailyLevels)) {
-				if (level->m_dailyID > 100000 && level->m_dailyID <= 200000 && level->m_normalPercent >= 100) {
-					switch (level->m_demonDifficulty) {
-						case 3: easyDemons++; break;
-						case 4: mediumDemons++; break;
-						case 0: hardDemons++; break;
-						case 5: insaneDemons++; break;
-						case 6: extremeDemons++; break;
+				if (level->m_dailyID > 100000 && level->m_dailyID <= 200000) {
+					if (level->m_normalPercent >= 100) {
+						switch (level->m_demonDifficulty) {
+							case 3: easyDemons++; break;
+							case 4: mediumDemons++; break;
+							case 0: hardDemons++; break;
+							case 5: insaneDemons++; break;
+							case 6: extremeDemons++; break;
+						}
+					}
+					if (GameStatsManager::sharedState()->isDailyRecall(level->m_dailyID)) {
+						recalledLevels++;
 					}
 				}
 			}
 			statDesc.append(fmt::format(
-				"\n\n<ca>Easy:</c> {}     <cd>Medium:</c> {}\n<co>Hard:</c> {}     <cr>Insane:</c> {}\n<c>_Extreme:</c> {}",
+				"\n\n<ca>Easy:</c> {}     <cd>Medium:</c> {}\n<co>Hard:</c> {}     <cr>Insane:</c> {}\n<c_>Extreme:</c> {}     <ct>Recalled:</c> {}",
 				addCommas(easyDemons), addCommas(mediumDemons),
 				addCommas(hardDemons), addCommas(insaneDemons),
-				addCommas(extremeDemons)
+				addCommas(extremeDemons), addCommas(recalledLevels)
 			));
 		} else if (m_statInfoId == "event") {
+			auto recalledLevels = 0;
+			for (auto [key, level] : CCDictionaryExt<std::string_view, GJGameLevel>(GameLevelManager::sharedState()->m_dailyLevels)) {
+				if (level->m_dailyID > 200000) {
+					if (GameStatsManager::sharedState()->isDailyRecall(level->m_dailyID)) {
+						recalledLevels++;
+					}
+				}
+			}
 			statDesc.append(fmt::format(
-				"\n\n<cc>Auto (1*):</c> {}     <cj>Easy (2*):</c> {}\n<cg>Normal (3*):</c> {}     <cy>Hard (4*):</c> {}\n<cs>Hard (5*):</c> {}     <co>Harder (6*):</c> {}\n<cr>Harder (7*):</c> {}     <cp>Insane (8*):</c> {}\n<ca>Insane (9*):</c> {}     <c>_Demon (10*):</c> {}",
+				"\n\n<cc>Auto (1*):</c> {}     <cj>Easy (2*):</c> {}\n<cg>Normal (3*):</c> {}     <cy>Hard (4*):</c> {}\n<cs>Hard (5*):</c> {}     <co>Harder (6*):</c> {}\n<cr>Harder (7*):</c> {}     <cp>Insane (8*):</c> {}\n<ca>Insane (9*):</c> {}     <c_>Demon (10*):</c> {}\n<ct>Recalled:</c> {}",
 				GameLevelManager::sharedState()->getCompletedEventLevels(1, 1),
 				GameLevelManager::sharedState()->getCompletedEventLevels(2, 2),
 				GameLevelManager::sharedState()->getCompletedEventLevels(3, 3),
@@ -744,7 +818,8 @@ public:
 				GameLevelManager::sharedState()->getCompletedEventLevels(7, 7),
 				GameLevelManager::sharedState()->getCompletedEventLevels(8, 8),
 				GameLevelManager::sharedState()->getCompletedEventLevels(9, 9),
-				GameLevelManager::sharedState()->getCompletedEventLevels(10, 10)
+				GameLevelManager::sharedState()->getCompletedEventLevels(10, 10),
+				addCommas(recalledLevels)
 			));
 		} else if (m_statInfoId == "icon") {
 			auto maxAmount = 0;
@@ -1003,7 +1078,7 @@ public:
 			for (auto [key, data] : CCDictionaryExt<std::string_view, CCString>(GameStatsManager::sharedState()->m_miscChests)) {
 				if (key[0] == '0') {
 					auto id = utils::numFromString<int>(key).unwrapOr(0);
-					if ((id >= 7 && id <= 11) || id == 24) {
+					if ((id >= 7 && id <= 11) || (id >= 24 && id <= 25)) {
 						socialChests++;
 					} else if (id >= 12 && id <= 21) {
 						adChests++;
@@ -1012,10 +1087,11 @@ public:
 					}
 				}
 			}
-			statDesc.append(fmt::format("\n\n<cy>Special Chests:</c> {}\n<cj>Social Chests:</c> {} / {}\n<cp>Ad Chests:</c> {} / {}", specialChests, socialChests, 6, adChests, 10));
+			statDesc.append(fmt::format("\n\n<cy>Special Chests:</c> {}\n<cj>Social Chests:</c> {} / {}\n<cp>Ad Chests:</c> {} / {}", specialChests, socialChests, 7, adChests, 10));
 		} else if (m_statInfoId == "key") {
 			auto demonKeys = GameStatsManager::sharedState()->getStat("21");
 			auto goldKeys = GameStatsManager::sharedState()->getStat("43");
+			auto recallCost = 0;
 			for (int i = 0; i < m_treasureTypes.size(); i++) {
 				auto count = GameStatsManager::sharedState()->countUnlockedSecretChests(m_treasureTypes[i]);
 				switch (m_treasureTypes[i]) {
@@ -1028,7 +1104,12 @@ public:
 					case GJRewardType::Gold: goldKeys += count; break;
 				};
 			}
-			statDesc.append(fmt::format("\n\n<cr>Demon Keys:</c> {}\n<cs>Gold Keys:</c> {}", addCommas(demonKeys), addCommas(goldKeys)));
+			for (auto [key, level] : CCDictionaryExt<std::string_view, GJGameLevel>(GameLevelManager::sharedState()->m_dailyLevels)) {
+				if (GameStatsManager::sharedState()->isDailyRecall(level->m_dailyID)) {
+					recallCost += GameStatsManager::sharedState()->dailyRecallPrice(level->m_dailyID);
+				}
+			}
+			statDesc.append(fmt::format("\n\n<cr>Demon Keys:</c> {}\n<cs>Gold Keys:</c> {}\n<ct>Spent on Recalls:</c> {}", addCommas(demonKeys + recallCost), addCommas(goldKeys), addCommas(recallCost)));
 		} else if (m_statInfoId == "achievement") {
 			auto achievements = AchievementManager::sharedState()->m_allAchievements;
 			auto mainAchievements = 0;
@@ -1093,6 +1174,16 @@ public:
 				}
 			}
 			statDesc.append(fmt::format("\n\n<cl>10 Diamonds:</c> {}\n<cj>15 Diamonds:</c> {}\n<cf>20 Diamonds:</c> {}", addCommas(quests10), addCommas(quests15), addCommas(quests20)));
+		} else if (m_statInfoId == "follow") {
+			auto accountId = GJAccountManager::sharedState()->m_accountID;
+			auto following = 0;
+			if (accountId > 0) {
+				auto userInfo = GameLevelManager::sharedState()->userInfoForAccountID(accountId);
+				if (userInfo) {
+					following = userInfo->m_followingCount;
+				}
+			}
+			statDesc.append(fmt::format("\n\n<cy>Following:</c> {}", addCommas(following)));
 		}
 
 		auto alert = FLAlertLayer::create(nullptr, statInfo[0].c_str(), statDesc.c_str(), "OK", nullptr, 330.f);
@@ -1113,8 +1204,8 @@ public:
 		);
 		pinButton->setID("pin-button"_spr);
 		pinButton->setTag(pinButtonTag);
-		pinButton->setPosition({140.f, alert->m_mainLayer->getChildByID("background")->getContentHeight() - 55.f});
-		alert->m_mainLayer->getChildByID("main-menu")->addChild(pinButton);
+		pinButton->setPosition({140.f, alert->m_height - 55.f});
+		alert->m_buttonMenu->addChild(pinButton);
 	}
 
 	void onPin(CCObject* sender) {
@@ -1229,7 +1320,13 @@ public:
 
 		// Value
 		auto value = 0;
-		if (stat == "level") {
+		auto forceGold = false;
+		if (stat == "40") {
+			value = GameStatsManager::sharedState()->getStat("40");
+			if (value >= m_gauntletCount) {
+				forceGold = true;
+			}
+		} else if (stat == "level") {
 			value += GameStatsManager::sharedState()->getStat("3");
 			value += GameStatsManager::sharedState()->getStat("4");
 			value += GameStatsManager::sharedState()->getStat("15");
@@ -1384,6 +1481,11 @@ public:
 					case GJRewardType::Gold: value += count; break;
 				};
 			}
+			for (auto [key, level] : CCDictionaryExt<std::string_view, GJGameLevel>(GameLevelManager::sharedState()->m_dailyLevels)) {
+				if (GameStatsManager::sharedState()->isDailyRecall(level->m_dailyID)) {
+					value += GameStatsManager::sharedState()->dailyRecallPrice(level->m_dailyID);
+				}
+			}
 		} else if (stat == "achievement") {
 			for (auto achievement : CCArrayExt<CCDictionary>(AchievementManager::sharedState()->m_allAchievements)) {
 				if (AchievementManager::sharedState()->isAchievementEarned(achievement->valueForKey("identifier")->getCString())) {
@@ -1404,6 +1506,14 @@ public:
 					value = userInfo->m_globalRank;
 				}
 			}
+		} else if (stat == "follow") {
+			auto accountId = GJAccountManager::sharedState()->m_accountID;
+			if (accountId > 0) {
+				auto userInfo = GameLevelManager::sharedState()->userInfoForAccountID(accountId);
+				if (userInfo) {
+					value = userInfo->m_followers;
+				}
+			}
 		} else if (stat == "creator") {
 			auto accountId = GJAccountManager::sharedState()->m_accountID;
 			if (accountId > 0) {
@@ -1417,8 +1527,8 @@ public:
 		}
 		auto valueFont = "bigFont.fnt";
 		auto valueScale = 0.8f;
-		if (statData.max) {
-			if (value >= statData.max) {
+		if (forceGold or statData.max) {
+			if (forceGold or value >= statData.max) {
 				valueFont = "goldFont.fnt";
 				valueScale = 1.f;
 			}
@@ -1492,9 +1602,9 @@ public:
 		{
 			{"Basic"},
 			{"1", "Jumps", 0.7f, "GJ_orderUpBtn_001.png", 0.55f},
-			{"2", "Attempts", 0.7f, "GJ_updateBtn_001.png", 0.55f},
+			{"2", "Attempts", 0.7f, "GJ_updateBtn_001.png", 0.55f, true},
 			{"level", "Levels", 0.7f, "GJ_playBtn2_001.png", 0.35f, true},
-			{"achievement", "Achievements", 0.7f, "rankIcon_1_001.png", 0.9f, true, 570},
+			{"achievement", "Achievements", 0.7f, "rankIcon_1_001.png", 0.9f, true, 572},
 			{"quest", "Quests", 0.7f, "quests.png"_spr, 0.475f, true}
 		},
 		{
@@ -1536,7 +1646,7 @@ public:
 		{
 			{"Chests"},
 			{"daily", "Daily\nChests", 0.6f, "GJ_dailyRewardBtn_001.png", 0.65f, true},
-			{"treasure", "Treasure\nChests", 0.6f, "chest_04_02_001.png", 0.25f, true, 624},
+			{"treasure", "Treasure\nChests", 0.6f, "chest_04_02_001.png", 0.25f, true, 634},
 			{"reward", "Reward\nChests", 0.6f, "chest_06_02_001.png", 0.25f, true},
 			{"vault", "Vault\nChests", 0.6f, "chest_09_02_001.png", 0.25f},
 			{"other", "Other\nChests", 0.6f, "chest_01_02_001.png", 0.3f, true},
@@ -1546,8 +1656,9 @@ public:
 			{"Other"},
 			{"10", "Liked\nLevels", 0.6f, "GJ_like2Btn_001.png", 0.55f},
 			{"11", "Rated\nLevels", 0.6f, "GJ_starBtn_001.png", 0.55f},
-			{"9", "Destroyed\nPlayers", 0.6f, "particle_17_001.png", 1.3f},
+			{"9", "Destroyed\nPlayers", 0.6f, "particle_220_001.png", 1.3f},
 			{"rank", "Global\nRank", 0.6f, "rankIcon_top500_001.png", 1.3f},
+			{"follow", "Followers", 0.7f, "GJ_followIcon_001.png", 1.f, true},
 			{"creator", "Creator\nPoints", 0.6f, "GJ_hammerIcon_001.png", 1.f}
 		}
 	};
@@ -1592,7 +1703,17 @@ public:
 		{"other", {"Other Chests", "Total amount of opened <cg>Special, Social & Ad Chests</c>."}},
 		{"key", {"Collected Keys", "Total amount of collected <cy>Demon & Gold Keys</c>."}},
 		{"rank", {"Global Rank", "Your rank on the <cy>Global Leaderboard</c>.\nThis updates every <cl>few hours</c>.\nWill show as <cr>0</c> if you aren't on the leaderboard."}},
+		{"follow", {"Followers", "Total amount of users that are <cj>following</c> your account.\nThis updates every <cl>hour</c>."}},
 		{"creator", {"Creator Points", "Total amount of earned <cg>Creator Points</c>."}}
+	};
+
+	std::vector<int> m_mainLevels { // Hardcoded because some people have extra levels in m_mainLevels for some reason
+		1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, // Main
+		1001, 1002, 1003, // Meltdown
+		2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, // World
+		3001, // Other
+		4001, 4002, 4003, // SubZero
+		5001, 5002, 5003, 5004 // Tower
 	};
 
 	std::vector<std::string> m_otherCoins {
@@ -1638,9 +1759,12 @@ public:
 
 	std::vector<std::string> m_pinnedStats {};
 
+	int m_gauntletCount = 0;
 	int m_currentPage = 0;
 	ZStringView m_statInfoId = "1";
 
+	CCMenuItemSpriteExtra* m_nextButton;
+	CCMenuItemSpriteExtra* m_previousButton;
 	CCMenu* m_navDotMenu;
 	CCLabelBMFont* m_pageTitleLabel;
 protected:
@@ -1652,6 +1776,12 @@ protected:
 		loadPinnedStats();
 
 		setTitle("Stats", "bigFont.fnt", 1.f);
+		addSideArt(m_mainLayer, SideArt::All, SideArtStyle::PopupBlue, false);
+
+		m_gauntletCount = GameLevelManager::sharedState()->m_lastSeenGauntletCount;
+		if (GameLevelManager::sharedState()->m_currentGauntletCount > 0) {
+			m_gauntletCount = GameLevelManager::sharedState()->m_currentGauntletCount;
+		}
 
 		// Button Menu
 		auto buttonMenu = CCMenu::create();
@@ -1664,27 +1794,27 @@ protected:
 		// Next Button
 		auto nextButtonSprite = CCSprite::createWithSpriteFrameName("GJ_arrow_02_001.png");
 		nextButtonSprite->setFlipX(true);
-		auto nextButton = CCMenuItemSpriteExtra::create(
+		m_nextButton = CCMenuItemSpriteExtra::create(
 			nextButtonSprite,
 			this,
 			menu_selector(StatsPage::onArrow)
 		);
-		nextButton->setID("next-button");
-		nextButton->setTag(1);
-		nextButton->setPosition({425.f, 125.f});
-		buttonMenu->addChild(nextButton);
+		m_nextButton->setID("next-button");
+		m_nextButton->setTag(1);
+		m_nextButton->setPosition({425.f, 125.f});
+		buttonMenu->addChild(m_nextButton);
 
 		// Previous Button
 		auto previousButtonSprite = CCSprite::createWithSpriteFrameName("GJ_arrow_02_001.png");
-		auto previousButton = CCMenuItemSpriteExtra::create(
+		m_previousButton = CCMenuItemSpriteExtra::create(
 			previousButtonSprite,
 			this,
 			menu_selector(StatsPage::onArrow)
 		);
-		previousButton->setID("previous-button");
-		previousButton->setTag(0);
-		previousButton->setPosition({-25.f, 125.f});
-		buttonMenu->addChild(previousButton);
+		m_previousButton->setID("previous-button");
+		m_previousButton->setTag(0);
+		m_previousButton->setPosition({-25.f, 125.f});
+		buttonMenu->addChild(m_previousButton);
 
 		// Info Button
 		auto infoButton = CCMenuItemSpriteExtra::create(
@@ -1772,30 +1902,6 @@ protected:
 		}
 		m_navDotMenu->updateLayout();
 
-		// Corners
-		auto topLeftCornerSprite = CCSprite::createWithSpriteFrameName("rewardCorner_001.png");
-		topLeftCornerSprite->setPosition({0.f, 250.f});
-		topLeftCornerSprite->setAnchorPoint({0.f, 1.f});
-		topLeftCornerSprite->setFlipY(true);
-		m_mainLayer->addChild(topLeftCornerSprite);
-
-		auto topRightCornerSprite = CCSprite::createWithSpriteFrameName("rewardCorner_001.png");
-		topRightCornerSprite->setPosition({400.f, 250.f});
-		topRightCornerSprite->setAnchorPoint({1.f, 1.f});
-		topRightCornerSprite->setFlipX(true);
-		topRightCornerSprite->setFlipY(true);
-		m_mainLayer->addChild(topRightCornerSprite);
-
-		auto bottomLeftCornerSprite = CCSprite::createWithSpriteFrameName("rewardCorner_001.png");
-		bottomLeftCornerSprite->setAnchorPoint({0.f, 0.f});
-		m_mainLayer->addChild(bottomLeftCornerSprite);
-
-		auto bottomRightCornerSprite = CCSprite::createWithSpriteFrameName("rewardCorner_001.png");
-		bottomRightCornerSprite->setPosition({400.f, 0.f});
-		bottomRightCornerSprite->setAnchorPoint({1.f, 0.f});
-		bottomRightCornerSprite->setFlipX(true);
-		m_mainLayer->addChild(bottomRightCornerSprite);
-
 		if (m_pinnedStats.size() == 0) {
 			m_navDotMenu->getChildByID("navdot-0")->setVisible(false);
 			m_navDotMenu->updateLayout();
@@ -1815,6 +1921,14 @@ protected:
 		
 		return true;
 	}
+
+	void keyDown(enumKeyCodes key, double p1) override {
+		if (key == enumKeyCodes::KEY_Left or key == enumKeyCodes::KEY_A) {
+			onArrow(m_previousButton);
+		} else if (key == enumKeyCodes::KEY_Right or key == enumKeyCodes::KEY_D) {
+			onArrow(m_nextButton);
+		}
+	}
 };
 
 class $modify(MenuLayer) {
@@ -1831,7 +1945,16 @@ class $modify(MenuLayer) {
 
 		return true;
 	}
+	
 	void onStats(CCObject*) {
 		StatsPage::create()->show();
 	}
 };
+
+/*
+$on_mod(Loaded) {
+	ButtonSettingPressedEventV3(Mod::get(), "buttons").listen([] (auto buttonKey) {
+		
+	}).leak();
+};
+*/

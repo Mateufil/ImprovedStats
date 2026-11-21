@@ -1,3 +1,29 @@
+# <cf>v1.6.0</c>
+- <cg>Made pages scrollable by pressing Left/Right or A/D keys</c>
+- <cg>Added Followers stat with extra stat:</c>
+	- Following
+- <cg>Added extra stats to Attempts:</c>
+	- Deaths:
+	- 0-9%, 10-19%, 20-29%, 30-39%, 40-49%
+	- 50-59%, 60-69%, 70-79%, 80-89%, 90-99%, Average
+- <cg>Added extra stat to Platformer Levels:</c>
+	- Saves
+- <cg>Added extra stat to Daily Levels:</c>
+	- Recalled
+- <cg>Added extra stat to Weekly Demons:</c>
+	- Recalled
+- <cg>Added extra stat to Event Levels:</c>
+	- Recalled
+- <cg>Added extra stat to Collected Keys:</c>
+	- Spent on Recalls
+- <cg>Added GitHub link</c>
+- <cs>Gauntlets stat now counts the maximum amount</c>
+- <cs>Fixed Demon levels extra stat in Gauntlets stat</c>
+- <cs>Hardcoded Official Level IDs</c>
+- <cs>Updated to Geometry Dash 2.2091</c>
+- <cs>Updated to Geode 6.0.0-beta.1</c>
+- <cr>Removed Node IDs dependency</c>
+
 # <cj>v1.5.2</c>
 - <cg>Made some stats display as gold if you have the maximum amount of it</c>
 - <cg>Added extra stats to Insane Levels:</c>

@@ -13,6 +13,9 @@ To access some extra stats you need to press the stat with a <cg>+ symbol</c> ne
 ### Basic
 - Jumps
 - Attempts
+	- <cy>Deaths:</c>
+	- <cy>0-9%, 10-19%, 20-29%, 30-39%, 40-49%</c>
+	- <cy>50-59%, 60-69%, 70-79%, 80-89%, 90-99%, Average</c>
 - <cy>Levels</c>
 	- <cy>Auto (1*), Easy (2*), Normal (3*), Hard (4*), Hard (5*)</c>
 	- <cy>Harder (6*), Harder (7*), Insane (8*), Insane (9*), Demon (10*)</c>
@@ -24,7 +27,7 @@ To access some extra stats you need to press the stat with a <cg>+ symbol</c> ne
 
 ### Collectibles
 - Stars
-- <cy>Moons</c>
+- Moons
 - Secret Coins
 	- <cy>Main Coins, Tower Coins, Map Pack Coins, Other Coins</c>
 - User Coins
@@ -47,7 +50,7 @@ To access some extra stats you need to press the stat with a <cg>+ symbol</c> ne
 - <cy>Platformer Levels</c>
 	- <cy>Auto (1*), Easy (2*), Normal (3*), Hard (4*), Hard (5*)</c>
 	- <cy>Harder (6*), Harder (7*), Insane (8*), Insane (9*), Demon (10*)</c>
-	- <cy>Official, Unrated</c>
+	- <cy>Official, Unrated, Saves</c>
 - Insane Levels
 	- <cy>Official Insanes, 8 Star Insanes, 9 Star Insanes</c>
 - Demon Levels
@@ -57,11 +60,13 @@ To access some extra stats you need to press the stat with a <cg>+ symbol</c> ne
 - Daily Levels
 	- <cy>Auto (1*), Easy (2*), Normal (3*), Hard (4*), Hard (5*)</c>
 	- <cy>Harder (6*), Harder (7*), Insane (8*), Insane (9*), Demon (10*)</c>
+	- <cy>Recalled</c>
 - <cy>Weekly Demons</c>
-	- <cy>Easy, Medium, Hard, Insane, Extreme</c>
+	- <cy>Easy, Medium, Hard, Insane, Extreme, Recalled</c>
 - <cy>Event Levels</c>
 	- <cy>Auto (1*), Easy (2*), Normal (3*), Hard (4*), Hard (5*)</c>
 	- <cy>Harder (6*), Harder (7*), Insane (8*), Insane (9*), Demon (10*)</c>
+	- <cy>Recalled</c>
 - Map Packs
 	- <cy>Levels, Auto (1*), Easy (2*), Normal (3*), Hard (4*), Hard (5*)</c>
 	- <cy>Harder (6*), Harder (7*), Insane (8*), Insane (9*), Demon (10*)</c>
@@ -98,13 +103,15 @@ To access some extra stats you need to press the stat with a <cg>+ symbol</c> ne
 - <cy>Other Chests</c>
 	- <cy>Special Chests, Social Chests, Ad Chests</c>
 - <cy>Collected Keys</c>
-	- <cy>Demon Keys, Gold Keys</c>
+	- <cy>Demon Keys, Gold Keys, Spent on Recalls</c>
 
 ### Other
 - Liked/Disliked Levels
 - Rated Levels
 - Destroyed Players
 - <cy>Global Rank</c>
+- <cy>Followers</c>
+	- <cy>Following</c>
 - <cy>Creator Points</c>
 
 ## <co>Pinning Stats</c>
@@ -115,7 +122,7 @@ To pin a stat you need to go into the info menu by pressing a stat, and then pre
 Pinned stats appear on the <cj>first page</c> of the <cl>Stats Menu</c>.
 
 ## <cg>Feedback</c>
-If you have any feedback or suggestions for this mod, you can message me on GD through [My Profile](user:33662092).
+If you have any feedback, suggestions or bug reports for this mod, you can create an issue on the mod's [GitHub](https://github.com/Mateufil/ImprovedStats).
 
 This is my first mod, so some feedback would be nice!
 
