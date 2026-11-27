@@ -6,6 +6,8 @@ using namespace geode::prelude;
 // This is my first Geode mod and also my first time using C++, so the code is probably bad
 // I will clean up the code in v2.0.0 I promise
 
+std::map<std::string, std::string> WraithCodes = {};
+
 struct Stat {
 	std::string stat;
 	std::string title;
@@ -116,6 +118,7 @@ public:
 		m_statInfoId = stat->getID();
 		auto statInfo = m_statInfo[m_statInfoId];
 		auto statDesc = statInfo[1];
+		auto scroll = false;
 		if (m_statInfoId == "2") { // Attempts
 			std::vector<std::string> deathsStrings = {};
 			auto deathsStats = std::vector(10, 0);
@@ -343,6 +346,20 @@ public:
 				addCommas(hardDemons), addCommas(insaneDemons),
 				addCommas(extremeDemons), addCommas(mainDemons)
 			));
+		} else if (m_statInfoId == "6") { // Stars
+			auto stars = 0;
+			auto maxStars = 0;
+			for (int i = 0; i < m_mainLevels.size(); i++) {
+				auto id = m_mainLevels[i];
+			 	auto level = GameLevelManager::sharedState()->getMainLevel(id, true);
+				if (!level->isPlatformer()) {
+					maxStars += level->m_stars;
+					if (level->m_normalPercent >= 100) {
+						stars += level->m_stars;
+					}
+				}
+			}
+			statDesc.append(fmt::format("\n\n<cy>Main Level Stars:</c> {} / {}", stars, maxStars));
 		} else if (m_statInfoId == "7") { // Map Packs
 			auto completedLevels = 0;
 			auto autoLevels = 0;
@@ -462,6 +479,20 @@ public:
 			));
 		} else if (m_statInfoId == "22") { // Orbs
 			statDesc.append(fmt::format("\n\n<cl>Current Orbs:</c> {}", addCommas(GameStatsManager::sharedState()->getStat("14"))));
+		} else if (m_statInfoId == "28") { // Moons
+			auto moons = 0;
+			auto maxMoons = 0;
+			for (int i = 0; i < m_mainLevels.size(); i++) {
+				auto id = m_mainLevels[i];
+			 	auto level = GameLevelManager::sharedState()->getMainLevel(id, true);
+				if (level->isPlatformer()) {
+					maxMoons += level->m_stars;
+					if (level->m_normalPercent >= 100) {
+						moons += level->m_stars;
+					}
+				}
+			}
+			statDesc.append(fmt::format("\n\n<co>Tower Level Moons:</c> {} / {}", moons, maxMoons));
 		} else if (m_statInfoId == "40") { // Gauntlets
 			auto autoLevels = 0;
 			auto easyLevels = 0;
@@ -497,6 +528,12 @@ public:
 				addCommas(harder7Levels), addCommas(insane8Levels),
 				addCommas(insane9Levels), addCommas(GameLevelManager::sharedState()->getCompletedGauntletDemons())
 			));
+		} else if (m_statInfoId == "41") { // List Rewards
+			auto diamonds = 0;
+			for (auto [key, data] : CCDictionaryExt<std::string_view, CCString>(GameStatsManager::sharedState()->m_completedLists)) {
+				diamonds += data->intValue();
+			}
+			statDesc.append(fmt::format("\n\n<cf>Claimed Diamonds:</c> {}", addCommas(diamonds)));
 		} else if (m_statInfoId == "42") { // Insane Levels
 			auto insane8Levels = 0;
 			auto insane9Levels = 0;
@@ -1071,6 +1108,22 @@ public:
 				gauntletChests,
 				pathChests, 10
 			));
+		} else if (m_statInfoId == "vault") {
+			auto codes = std::string("");
+			for (auto [key, data] : CCDictionaryExt<std::string, CCString>(GameStatsManager::sharedState()->m_wraithChests)) {
+				if (key[0] == 'o') {
+					if (codes != "") {
+						codes.append(", ");
+					}
+					if (WraithCodes.contains(key)) {
+						codes.append(WraithCodes[key]);
+					} else {
+						codes.append("<cr>(#" + key.substr(9) + ")</c>");
+					}
+				}
+			}
+			statDesc.append(fmt::format("\n\n<cp>Used Wraith Codes:</c> {}", codes));
+			scroll = true;
 		} else if (m_statInfoId == "other") {
 			auto specialChests = 0;
 			auto socialChests = 0;
@@ -1186,7 +1239,11 @@ public:
 			statDesc.append(fmt::format("\n\n<cy>Following:</c> {}", addCommas(following)));
 		}
 
-		auto alert = FLAlertLayer::create(nullptr, statInfo[0].c_str(), statDesc.c_str(), "OK", nullptr, 330.f);
+		auto width = 330.f;
+		if (scroll) {
+			width = 390.f;
+		}
+		auto alert = FLAlertLayer::create(nullptr, statInfo[0].c_str(), statDesc.c_str(), "OK", nullptr, width, scroll, 0.f, 1.f);
 		alert->show();
 
 		CCSprite* pinButtonSprite;
@@ -1204,7 +1261,7 @@ public:
 		);
 		pinButton->setID("pin-button"_spr);
 		pinButton->setTag(pinButtonTag);
-		pinButton->setPosition({140.f, alert->m_height - 55.f});
+		pinButton->setPosition({width / 2 - 25.f, alert->m_height - 55.f});
 		alert->m_buttonMenu->addChild(pinButton);
 	}
 
@@ -1259,7 +1316,12 @@ public:
 		for (auto [key, level] : CCDictionaryExt<std::string_view, GJGameLevel>(GameLevelManager::sharedState()->m_mainLevels)) {
 			debugMessage.append(fmt::format("- #{} - {} - {}%\n", level->m_levelID, level->m_levelName, level->m_normalPercent));
 		}
-		debugMessage.append("</c>");
+
+		// Wraith Codes
+		debugMessage.append("# <cp>Wraith Codes\n");
+		for (auto [key, code] : WraithCodes) {
+			debugMessage.append(fmt::format("- {} - {}\n", key, code));
+		}
 
 		MDPopup::create("Debug", debugMessage, "OK", "Copy", [&, debugMessage](bool button2){
 			if (button2) {
@@ -1609,8 +1671,8 @@ public:
 		},
 		{
 			{"Collectibles"},
-			{"6", "Stars", 0.7f, "GJ_bigStar_noShadow_001.png", 0.6f},
-			{"28", "Moons", 0.7f, "GJ_bigMoon_noShadow_001.png", 0.6f},
+			{"6", "Stars", 0.7f, "GJ_bigStar_noShadow_001.png", 0.6f, true},
+			{"28", "Moons", 0.7f, "GJ_bigMoon_noShadow_001.png", 0.6f, true},
 			{"13", "Collected\nDiamonds", 0.6f, "GJ_bigDiamond_noShadow_001.png", 0.6f, true},
 			{"8", "Secret\nCoins", 0.6f, "secretCoinUI_001.png", 0.6f, true, 164},
 			{"12", "User\nCoins", 0.6f, "secretCoinUI2_001.png", 0.6f, true},
@@ -1632,7 +1694,7 @@ public:
 			{"event", "Event\nLevels", 0.6f, "gj_eventCrown_001.png", 0.425f, true},
 			{"7", "Map\nPacks", 0.6f, "mapPacks.png"_spr, 0.425f, true, 65},
 			{"40", "Gauntlets", 0.7f, "gauntlets.png"_spr, 0.425f, true},
-			{"41", "List\nRewards", 0.6f, "GJ_listAddBtn_001.png", 0.8f}
+			{"41", "List\nRewards", 0.6f, "GJ_listAddBtn_001.png", 0.8f, true}
 		},
 		{
 			{"Icons"},
@@ -1648,7 +1710,7 @@ public:
 			{"daily", "Daily\nChests", 0.6f, "GJ_dailyRewardBtn_001.png", 0.65f, true},
 			{"treasure", "Treasure\nChests", 0.6f, "chest_04_02_001.png", 0.25f, true, 634},
 			{"reward", "Reward\nChests", 0.6f, "chest_06_02_001.png", 0.25f, true},
-			{"vault", "Vault\nChests", 0.6f, "chest_09_02_001.png", 0.25f},
+			{"vault", "Vault\nChests", 0.6f, "chest_09_02_001.png", 0.25f, true},
 			{"other", "Other\nChests", 0.6f, "chest_01_02_001.png", 0.3f, true},
 			{"key", "Collected\nKeys", 0.6f, "GJ_bigKey_001.png", 0.75f, true}
 		},
@@ -1767,6 +1829,8 @@ public:
 	CCMenuItemSpriteExtra* m_previousButton;
 	CCMenu* m_navDotMenu;
 	CCLabelBMFont* m_pageTitleLabel;
+
+	async::TaskHolder<web::WebResponse> m_listener;
 protected:
 	bool init() {
 		if (!Popup::init(400.f, 250.f)) {
@@ -1918,6 +1982,21 @@ protected:
 				GameLevelManager::sharedState()->getMapPacks(packSearch);
 			}
 		}
+
+		if (WraithCodes.size() == 0) {
+			log::info("Getting wraith codes");
+			auto request = web::WebRequest();
+			m_listener.spawn(
+				request.get("https://mateufil.dev/data/geometry-dash/WraithCodes.json"),
+				[](web::WebResponse response) {
+					if (!response.ok()) return;
+					auto json = response.json().unwrapOr(matjson::Value());
+					for (auto [key, value] : json) {
+						WraithCodes[key] = value.asString().unwrap();
+					}
+				}
+			);
+		}
 		
 		return true;
 	}
@@ -1927,11 +2006,14 @@ protected:
 			onArrow(m_previousButton);
 		} else if (key == enumKeyCodes::KEY_Right or key == enumKeyCodes::KEY_D) {
 			onArrow(m_nextButton);
+		} else if (key == enumKeyCodes::KEY_Escape) {
+			onClose(nullptr);
 		}
 	}
 };
 
 class $modify(MenuLayer) {
+
 	bool init() {
 		if (!MenuLayer::init()) return false;
 

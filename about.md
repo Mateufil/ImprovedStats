@@ -27,7 +27,9 @@ To access some extra stats you need to press the stat with a <cg>+ symbol</c> ne
 
 ### Collectibles
 - Stars
+	- <cy>Main Level Stars</c>
 - Moons
+	- <cy>Tower Level Moons</c>
 - Secret Coins
 	- <cy>Main Coins, Tower Coins, Map Pack Coins, Other Coins</c>
 - User Coins
@@ -74,6 +76,7 @@ To access some extra stats you need to press the stat with a <cg>+ symbol</c> ne
 	- <cy>Levels, Auto (1*), Easy (2*), Normal (3*), Hard (4*), Hard (5*)</c>
 	- <cy>Harder (6*), Harder (7*), Insane (8*), Insane (9*), Demon (10*)</c>
 - List Rewards
+	- <cy>Claimed Diamonds</c>
 
 ### Icons
 - <cy>Icons</c>
@@ -100,6 +103,7 @@ To access some extra stats you need to press the stat with a <cg>+ symbol</c> ne
 - <cy>Reward Chests</c>
 	- <cy>Weekly, Event, Gauntlet, Path</c>
 - <cy>Vault Chests</c>
+	- <cy>Used Wraith Codes</c>
 - <cy>Other Chests</c>
 	- <cy>Special Chests, Social Chests, Ad Chests</c>
 - <cy>Collected Keys</c>

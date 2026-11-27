@@ -1,3 +1,14 @@
+# <cl>v1.6.1</c>
+- <cg>Added extra stat to Stars:</c>
+	- Main Level Stars
+- <cg>Added extra stat to Moons:</c>
+	- Tower Level Moons
+- <cg>Added extra stat to List Rewards:</c>
+	- Claimed Diamonds
+- <cg>Added extra stat to Vault Chests:</c>
+	- Used Wraith Codes
+- <cs>Fixed Escape key not closing the menu</c>
+
 # <cf>v1.6.0</c>
 - <cg>Made pages scrollable by pressing Left/Right or A/D keys</c>
 - <cg>Added Followers stat with extra stat:</c>
